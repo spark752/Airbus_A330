@@ -1339,15 +1339,15 @@
 			</key>
 			<key n="55">
 				<name>7</name>
-				<desc>Elevator Trim Down</desc>
-				<!--binding>
+				<desc>Helicopter/Elevator Trim Down</desc>
+				<binding>
 					<condition>
 						<not><property>/options/system/keyboard-mode</property></not>
 					</condition>
 					<command>property-assign</command>
 					<property>/sim/current-view/view-number</property>
-					<value></value>
-				</binding-->
+					<value>1</value>
+				</binding>
 				<binding>
 					<condition>
 						<property>/options/system/keyboard-mode</property>
