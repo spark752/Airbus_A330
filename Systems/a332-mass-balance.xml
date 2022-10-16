@@ -10,7 +10,7 @@
 	<ixy unit="SLUG*FT2">       0 </ixy>
 	<ixz unit="SLUG*FT2">       0 </ixz>
 	<iyz unit="SLUG*FT2">       0 </iyz>
-	<emptywt unit="LBS" >  214000 </emptywt>
+	<emptywt unit="LBS" >  269800 </emptywt>
 	
 	<location name="CG" unit="M">
 		<x> 0.48086 </x>
@@ -19,7 +19,7 @@
 	</location>
 	
 	<pointmass name="Crew">
-		<weight unit="LBS">320</weight>
+		<weight unit="LBS">360</weight>
 		<location name="POINTMASS" unit="M">
 			<x> -20.1707 </x>
 			<y> 0 </y>
