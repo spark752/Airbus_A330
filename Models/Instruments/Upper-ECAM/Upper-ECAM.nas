@@ -8,6 +8,7 @@ var upperECAM_test = nil;
 var upperECAM_display = nil;
 var elapsedtime = 0;
 var leftmsg = "XX";
+var LBS2KGS = 0.4535924;
 
 # Create Nodes:
 var fuel_1 = props.globals.initNode("/engines/engine[0]/fuel-flow_actual", 0);
@@ -93,6 +94,7 @@ var ECAM_line7c = props.globals.getNode("/ECAM/msg/line7c", 1);
 var ECAM_line8c = props.globals.getNode("/ECAM/msg/line8c", 1);
 var ECAMleft = props.globals.getNode("/ECAM/left-msg", 1);
 var rate = props.globals.getNode("/systems/acconfig/options/uecam-rate", 1);
+var acconfig_weight_kgs = props.globals.getNode("/systems/acconfig/options/weight-kgs", 1);
 
 var canvas_upperECAM_base = {
 	init: func(canvas_group, file) {
@@ -211,7 +213,13 @@ var canvas_upperECAM_base = {
 		}
 		
 		# FOB
-		me["FOB-LBS"].setText(sprintf("%s", math.round(fuel.getValue(), 10)));
+		if (acconfig_weight_kgs.getValue() == 1) {
+			me["FOB-weight"].setText(sprintf("%s", math.round(fuel.getValue() * LBS2KGS, 10)));     
+			me["FOB-weight-unit"].setText("KG");
+		} else {
+			me["FOB-weight"].setText(sprintf("%s", math.round(fuel.getValue(), 10)));
+			me["FOB-weight-unit"].setText("LBS");
+		}
 		
 		# Left ECAM Messages
 		line1c = ECAM_line1c.getValue();
@@ -446,7 +454,7 @@ var canvas_upperECAM_ge = {
 	getKeys: func() {
 		return ["N11-needle","N11-thr","N11-ylim","N11","N11-decpnt","N11-decimal","N11-box","N11-scale","N11-scale2","N11-scaletick","N11-scalenum","N11-XX","N11-XX2","N11-XX-box","EGT1-needle","EGT1","EGT1-scale","EGT1-box","EGT1-scale2","EGT1-scaletick",
 		"EGT1-XX","N21","N21-decpnt","N21-decimal","N21-XX","FF1","FF1-XX","N12-needle","N12-thr","N12-ylim","N12","N12-decpnt","N12-decimal","N12-box","N12-scale","N12-scale2","N12-scaletick","N12-scalenum","N12-XX","N12-XX2","N12-XX-box","EGT2-needle",
-		"EGT2","EGT2-scale","EGT2-box","EGT2-scale2","EGT2-scaletick","EGT2-XX","N22","N22-decpnt","N22-decimal","N22-XX","FF2","FF2-XX","FOB-LBS","FlapTxt","FlapDots","N1Lim-mode","N1Lim","N1Lim-decpnt","N1Lim-decimal","N1Lim-percent","N1Lim-XX","N1Lim-XX2",
+		"EGT2","EGT2-scale","EGT2-box","EGT2-scale2","EGT2-scaletick","EGT2-XX","N22","N22-decpnt","N22-decimal","N22-XX","FF2","FF2-XX","FFlow1-weight-unit","FOB-weight","FOB-weight-unit","FlapTxt","FlapDots","N1Lim-mode","N1Lim","N1Lim-decpnt","N1Lim-decimal","N1Lim-percent","N1Lim-XX","N1Lim-XX2",
 		"REV1","REV1-box","REV2","REV2-box","ECAM_Left","ECAML1","ECAML2","ECAML3","ECAML4","ECAML5","ECAML6","ECAML7","ECAML8","TO_Memo","TO_Autobrake","TO_Signs","TO_Spoilers","TO_Flaps","TO_Config","TO_Autobrake_B","TO_Signs_B","TO_Spoilers_B","TO_Flaps_B",
 		"TO_Config_B","LDG_Memo","LDG_Gear","LDG_Signs","LDG_Spoilers","LDG_Flaps","LDG_Gear_B","LDG_Signs_B","LDG_Spoilers_B","LDG_Flaps_B","LDG_Flaps_B3"];
 	},
@@ -615,8 +623,15 @@ var canvas_upperECAM_ge = {
 		}
 		
 		# FF
-		me["FF1"].setText(sprintf("%s", math.round(fuel_1.getValue(), 10)));
-		me["FF2"].setText(sprintf("%s", math.round(fuel_2.getValue(), 10)));
+		if (acconfig_weight_kgs.getValue() == 1) {
+			me["FFlow1-weight-unit"].setText("KG/H");
+			me["FF1"].setText(sprintf("%s", math.round(fuel_1.getValue() * LBS2KGS, 10)));
+			me["FF2"].setText(sprintf("%s", math.round(fuel_2.getValue() * LBS2KGS, 10)));              
+		} else {
+			me["FF1"].setText(sprintf("%s", math.round(fuel_1.getValue(), 10)));
+			me["FF2"].setText(sprintf("%s", math.round(fuel_2.getValue(), 10)));        
+			me["FFlow1-weight-unit"].setText("LBS/H");
+		}
 		
 		if (ff_1 == 1) {
 			me["FF1"].show();
@@ -676,7 +691,7 @@ var canvas_upperECAM_pwrr = {
 		return ["EPR1-needle","EPR1-thr","EPR1-ylim","EPR1","EPR1-decpnt","EPR1-decimal","EPR1-box","EPR1-scale","EPR1-scaletick","EPR1-scalenum","EPR1-XX","EPR1-XX2","EPR1-XX-box","EGT1-needle","EGT1","EGT1-scale","EGT1-box","EGT1-scale2","EGT1-scaletick","EGT1-XX","N11-needle","N11-thr",
 		"N11-ylim","N11","N11-decpnt","N11-decimal","N11-scale","N11-scale2","N11-scaletick","N11-scalenum","N11-XX","N21Label","N21","N21-decpnt","N21-decimal","N21-XX","FF1","FF1-XX","EPR2-needle","EPR2-thr","EPR2-ylim","EPR2","EPR2-decpnt","EPR2-decimal",
 		"EPR2-box","EPR2-scale","EPR2-scaletick","EPR2-scalenum","EPR2-XX","EPR2-XX2","EPR2-XX-box","EGT2-needle","EGT2","EGT2-scale","EGT2-box","EGT2-scale2","EGT2-scaletick","EGT2-XX","N12-needle","N12-thr","N12-ylim","N12","N12-decpnt","N12-decimal",
-		"N12-scale","N12-scale2","N12-scaletick","N12-scalenum","N12-XX","N22Label","N22","N22-decpnt","N22-decimal","N22-XX","FF2","FF2-XX","FOB-LBS","FlapTxt","FlapDots","EPRLim-mode","EPRLim","EPRLim-decpnt","EPRLim-decimal","EPRLim-XX","EPRLim-XX2","REV1",
+		"N12-scale","N12-scale2","N12-scaletick","N12-scalenum","N12-XX","N22Label","N22","N22-decpnt","N22-decimal","N22-XX","FF2","FF2-XX","FFlow1-weight-unit","FFlow2-weight-unit","FOB-weight","FOB-weight-unit","FlapTxt","FlapDots","EPRLim-mode","EPRLim","EPRLim-decpnt","EPRLim-decimal","EPRLim-XX","EPRLim-XX2","REV1",
 		"REV1-box","REV2","REV2-box","ECAM_Left","ECAML1","ECAML2","ECAML3","ECAML4","ECAML5","ECAML6","ECAML7","ECAML8","TO_Memo","TO_Autobrake","TO_Signs","TO_Spoilers","TO_Flaps","TO_Config","TO_Autobrake_B","TO_Signs_B","TO_Spoilers_B","TO_Flaps_B",
 		"TO_Config_B","LDG_Memo","LDG_Gear","LDG_Signs","LDG_Spoilers","LDG_Flaps","LDG_Gear_B","LDG_Signs_B","LDG_Spoilers_B","LDG_Flaps_B","LDG_Flaps_B3"];
 	},
@@ -930,8 +945,17 @@ var canvas_upperECAM_pwrr = {
 		}
 		
 		# FF
-		me["FF1"].setText(sprintf("%s", math.round(fuel_1.getValue(), 10)));
-		me["FF2"].setText(sprintf("%s", math.round(fuel_2.getValue(), 10)));
+		if (acconfig_weight_kgs.getValue() == 1) {
+			me["FFlow1-weight-unit"].setText("KG/H");
+			me["FFlow2-weight-unit"].setText("KG/H");            
+			me["FF1"].setText(sprintf("%s", math.round(fuel_1.getValue() * LBS2KGS, 10)));
+			me["FF2"].setText(sprintf("%s", math.round(fuel_2.getValue() * LBS2KGS, 10)));              
+		} else {
+			me["FF1"].setText(sprintf("%s", math.round(fuel_1.getValue(), 10)));
+			me["FF2"].setText(sprintf("%s", math.round(fuel_2.getValue(), 10)));        
+			me["FFlow1-weight-unit"].setText("LBS/H");
+			me["FFlow2-weight-unit"].setText("LBS/H");            
+		}
 		
 		if (ff_1 == 1) {
 			me["FF1"].show();

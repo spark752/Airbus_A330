@@ -5,6 +5,7 @@
 var lowerECAM_apu = nil;
 var lowerECAM_eng = nil;
 var lowerECAM_fctl = nil;
+var lowerECAM_sts = nil;
 var lowerECAM_test = nil;
 var lowerECAM_display = nil;
 var page = "fctl";
@@ -38,6 +39,11 @@ setprop("/FMGC/internal/gw", 0);
 setprop("/instrumentation/du/du4-test", 0);
 setprop("/instrumentation/du/du4-test-time", 0);
 setprop("/instrumentation/du/du4-test-amount", 0);
+
+# A330-main.xml puts this in the same namespace as Upper-ECAM.nas which
+# includes definitions for:
+# LBS2KGS
+# acconfig_weight_kgs
 
 var canvas_lowerECAM_base = {
 	init: func(canvas_group, file) {
@@ -95,21 +101,26 @@ var canvas_lowerECAM_base = {
 					lowerECAM_apu.page.show();
 					lowerECAM_eng.page.hide();
 					lowerECAM_fctl.page.hide();
+					lowerECAM_sts.page.hide();
 					lowerECAM_apu.update();
 				} else if (page == "eng") {
 					lowerECAM_apu.page.hide();
 					lowerECAM_eng.page.show();
 					lowerECAM_fctl.page.hide();
+					lowerECAM_sts.page.hide();                    
 					lowerECAM_eng.update();
 				} else if (page == "fctl") {
 					lowerECAM_apu.page.hide();
 					lowerECAM_eng.page.hide();
 					lowerECAM_fctl.page.show();
+					lowerECAM_sts.page.hide();
 					lowerECAM_fctl.update();
 				} else {
 					lowerECAM_apu.page.hide();
 					lowerECAM_eng.page.hide();
 					lowerECAM_fctl.page.hide();
+					lowerECAM_sts.page.show();                    
+					lowerECAM_sts.update();                    
 				}
 			}
 		} else {
@@ -117,15 +128,22 @@ var canvas_lowerECAM_base = {
 			lowerECAM_apu.page.hide();
 			lowerECAM_eng.page.hide();
 			lowerECAM_fctl.page.hide();
+			lowerECAM_sts.page.hide();
 		}
 	},
 	updateBottomStatus: func() {
 		me["TAT"].setText(sprintf("%2.0f", getprop("/environment/temperature-degc")));
 		me["SAT"].setText(sprintf("%2.0f", getprop("/environment/temperature-degc")));
-		me["GW"].setText(sprintf("%s", math.round(getprop("/FMGC/internal/gw"))));
 		me["UTCh"].setText(sprintf("%02d", getprop("/sim/time/utc/hour")));
 		me["UTCm"].setText(sprintf("%02d", getprop("/sim/time/utc/minute")));
-	},
+		if (acconfig_weight_kgs.getValue() == 1) {
+			me["GW-weight-unit"].setText("KG");
+			me["GW"].setText(sprintf("%s", math.round(getprop("/FMGC/internal/gw") * LBS2KGS, 10)));             
+		} else {
+			me["GW"].setText(sprintf("%s", math.round(getprop("/FMGC/internal/gw"))));        
+			me["GW-weight-unit"].setText("LBS");
+		}
+	}
 };
 
 var canvas_lowerECAM_apu = {
@@ -137,7 +155,7 @@ var canvas_lowerECAM_apu = {
 	},
 	getKeys: func() {
 		return ["TAT","SAT","GW","UTCh","UTCm","APUN-needle","APUEGT-needle","APUN","APUEGT","APUAvail","APUFlapOpen","APUBleedValve","APUBleedOnline","APUGenOnline","APUGentext","APUGenLoad","APUGenbox","APUGenVolt","APUGenHz","APUBleedPSI","APUfuelLO",
-		"text3724","text3728","text3732"];
+		"text3724","text3728","text3732", "GW-weight-unit"];
 	},
 	update: func() {
 		oat = getprop("/environment/temperature-degc");
@@ -249,54 +267,6 @@ var canvas_lowerECAM_apu = {
 	},
 };
 
-var canvas_lowerECAM_eng = {
-	new: func(canvas_group, file) {
-		var m = {parents: [canvas_lowerECAM_eng, canvas_lowerECAM_base]};
-		m.init(canvas_group, file);
-		
-		return m;
-	},
-	getKeys: func() {
-		return ["TAT","SAT","GW","UTCh","UTCm","OilQT1-needle","OilQT2-needle","OilQT1","OilQT2","OilQT1-decimal","OilQT2-decimal","OilPSI1-needle","OilPSI2-needle","OilPSI1","OilPSI2"];
-	},
-	update: func() {
-		# Oil Quantity
-		me["OilQT1"].setText(sprintf("%s", math.round(getprop("/engines/engine[0]/oil-qt-actual"))));
-		me["OilQT2"].setText(sprintf("%s", math.round(getprop("/engines/engine[1]/oil-qt-actual"))));
-		me["OilQT1-decimal"].setText(sprintf("%s", int(10*math.mod(getprop("/engines/engine[0]/oil-qt-actual"),1))));
-		me["OilQT2-decimal"].setText(sprintf("%s", int(10*math.mod(getprop("/engines/engine[1]/oil-qt-actual"),1))));
-		
-		me["OilQT1-needle"].setRotation((getprop("/ECAM/Lower/Oil-QT[0]") + 90) * D2R);
-		me["OilQT2-needle"].setRotation((getprop("/ECAM/Lower/Oil-QT[1]") + 90) * D2R);
-		
-		# Oil Pressure
-		if (getprop("/engines/engine[0]/oil-psi-actual") >= 20) {
-			me["OilPSI1"].setColor(0.0509,0.7529,0.2941);
-			me["OilPSI1-needle"].setColor(0.0509,0.7529,0.2941);
-		} else {
-			me["OilPSI1"].setColor(1,0,0);
-			me["OilPSI1-needle"].setColor(1,0,0);
-		}
-		
-		if (getprop("/engines/engine[1]/oil-psi-actual") >= 20) {
-			me["OilPSI2"].setColor(0.0509,0.7529,0.2941);
-			me["OilPSI2-needle"].setColor(0.0509,0.7529,0.2941);
-		} else {
-			me["OilPSI2"].setColor(1,0,0);
-			me["OilPSI2-needle"].setColor(1,0,0);
-		}
-		
-		me["OilPSI1"].setText(sprintf("%s", math.round(getprop("/engines/engine[0]/oil-psi-actual"))));
-		me["OilPSI2"].setText(sprintf("%s", math.round(getprop("/engines/engine[1]/oil-psi-actual"))));
-		
-		me["OilPSI1-needle"].setRotation((getprop("/ECAM/Lower/Oil-PSI[0]") + 90) * D2R);
-		me["OilPSI2-needle"].setRotation((getprop("/ECAM/Lower/Oil-PSI[1]") + 90) * D2R);
-		
-		me.updateBottomStatus();
-	},
-};
-
-
 var canvas_lowerECAM_fctl = {
 	new: func(canvas_group, file) {
 		var m = {parents: [canvas_lowerECAM_fctl, canvas_lowerECAM_base]};
@@ -308,7 +278,7 @@ var canvas_lowerECAM_fctl = {
 		return["TAT","SAT","GW","UTCh","UTCm","ailL","ailR","ailL_out","ailR_out","elevL","elevR","PTcc","PT","PTupdn","prim1","prim2","prim3","sec1","sec2","ailLblue","ailRblue","elevLblue","elevRblue","rudderblue","ailLgreen","ailRgreen","ailLgreen2",
 		"ailRgreen2","elevLgreen","ruddergreen","PTgreen","elevRyellow","rudderyellow","ailLyellow","ailRyellow","PTyellow","rudder","spdbrkblue","spdbrkgreen","spdbrkyellow","spoiler1Rex","spoiler1Rrt","spoiler2Rex","spoiler2Rrt","spoiler3Rex","spoiler3Rrt",
 		"spoiler4Rex","spoiler4Rrt","spoiler5Rex","spoiler5Rrt","spoiler1Lex","spoiler1Lrt","spoiler2Lex","spoiler2Lrt","spoiler3Lex","spoiler3Lrt","spoiler4Lex","spoiler4Lrt","spoiler5Lex","spoiler5Lrt","spoiler1Rf","spoiler2Rf","spoiler3Rf","spoiler4Rf",
-		"spoiler5Rf","spoiler1Lf","spoiler2Lf","spoiler3Lf","spoiler4Lf","spoiler5Lf","ailLscale","ailRscale","path4249","path4249-3","path4338","path4249-3-6-7","path4249-3-6-7-5"];
+		"spoiler5Rf","spoiler1Lf","spoiler2Lf","spoiler3Lf","spoiler4Lf","spoiler5Lf","ailLscale","ailRscale","path4249","path4249-3","path4338","path4249-3-6-7","path4249-3-6-7-5","GW-weight-unit"];
 	},
 	update: func() { 
 		blue_psi = getprop("/systems/hydraulic/blue-psi");
@@ -745,11 +715,13 @@ setlistener("sim/signals/fdm-initialized", func {
 	var groupApu = lowerECAM_display.createGroup();
 	var groupEng = lowerECAM_display.createGroup();
 	var groupFctl = lowerECAM_display.createGroup();
+	var groupSts = lowerECAM_display.createGroup();
 	var group_test = lowerECAM_display.createGroup();
 
 	lowerECAM_apu = canvas_lowerECAM_apu.new(groupApu, "Aircraft/Airbus_A330/Models/Instruments/Lower-ECAM/res/apu.svg");
 	lowerECAM_eng = canvas_lowerECAM_eng.new(groupEng, "Aircraft/Airbus_A330/Models/Instruments/Lower-ECAM/res/eng.svg");
 	lowerECAM_fctl = canvas_lowerECAM_fctl.new(groupFctl, "Aircraft/Airbus_A330/Models/Instruments/Lower-ECAM/res/fctl.svg");
+	lowerECAM_sts = canvas_lowerECAM_sts.new(groupSts, "Aircraft/Airbus_A330/Models/Instruments/Lower-ECAM/res/status.svg");
 	lowerECAM_test = canvas_lowerECAM_test.new(group_test, "Aircraft/Airbus_A330/Models/Instruments/Common/res/du-test.svg");
 	
 	lowerECAM_update.start();
