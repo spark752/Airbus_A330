@@ -157,6 +157,11 @@
 				<path>Aircraft/Airbus_A330/Systems/pfd.xml</path>
 			</autopilot>
 			<!-- 10 is sound -->
+
+			<!-- 115 same as E-Jet + doesn't currently conflict with A320 -->
+			<property-rule n="115">
+				<path>Aircraft/Airbus_A330/Systems/views.xml</path>
+			</property-rule>
 		</systems>
 
 		<sounde>
@@ -1101,7 +1106,8 @@
 						<binding n="1">
 							<condition>
 								<and>
-									<property>/devices/status/mice/mouse[0]/button[2]</property>
+									<property>/sim/current-view/can-change-z-offset</property>
+									<not><property>/devices/status/mice/mouse[0]/button[2]</property></not>
 									<not><property>/sim/mouse/right-button-mode-cycle-enabled</property></not>
 								</and>
 							</condition>
@@ -1116,7 +1122,8 @@
 						<binding n="1">
 							<condition>
 								<and>
-									<property>/devices/status/mice/mouse[0]/button[2]</property>
+									<property>/sim/current-view/can-change-z-offset</property>                                    
+									<not><property>/devices/status/mice/mouse[0]/button[2]</property></not>
 									<not><property>/sim/mouse/right-button-mode-cycle-enabled</property></not>
 								</and>
 							</condition>
@@ -1339,15 +1346,15 @@
 			</key>
 			<key n="55">
 				<name>7</name>
-				<desc>Elevator Trim Down</desc>
-				<!--binding>
+				<desc>Helicopter/Elevator Trim Down</desc>
+				<binding>
 					<condition>
 						<not><property>/options/system/keyboard-mode</property></not>
 					</condition>
 					<command>property-assign</command>
 					<property>/sim/current-view/view-number</property>
-					<value></value>
-				</binding-->
+					<value>1</value>
+				</binding>
 				<binding>
 					<condition>
 						<property>/options/system/keyboard-mode</property>
