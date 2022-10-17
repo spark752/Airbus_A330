@@ -1633,6 +1633,9 @@
 			<file>Aircraft/Airbus_A330/Models/Instruments/Lower-ECAM/Lower-ECAM.nas</file>
 			<file>Aircraft/Airbus_A330/Models/Instruments/Lower-ECAM/Lower-ECAM-sts.nas</file>
 			<file>Aircraft/Airbus_A330/Models/Instruments/Lower-ECAM/Lower-ECAM-eng.nas</file>
+			<file>Aircraft/Airbus_A330/Models/Instruments/Lower-ECAM/Lower-ECAM-apu.nas</file>
+			<file>Aircraft/Airbus_A330/Models/Instruments/Lower-ECAM/Lower-ECAM-fctl.nas</file>
+			<file>Aircraft/Airbus_A330/Models/Instruments/Lower-ECAM/Lower-ECAM-elec.nas</file>
 		</canvas_ecam>
 		<canvas_iesi>
 			<file>Aircraft/Airbus_A330/Models/Instruments/IESI/IESI.nas</file>

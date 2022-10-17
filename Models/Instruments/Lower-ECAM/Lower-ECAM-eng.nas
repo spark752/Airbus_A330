@@ -5,8 +5,6 @@
 # A330-main.xml puts this in the same namespace as Lower-ECAM.nas and
 # Upper-ECAM.nas
 
-var QT2LTR = 0.946353;
-
 var canvas_lowerECAM_eng = {
     new: func(canvas_group, file) {
         var m = {parents: [canvas_lowerECAM_eng, canvas_lowerECAM_base]};
@@ -14,7 +12,7 @@ var canvas_lowerECAM_eng = {
         return m;
     },
     getKeys: func() {
-        return ["TAT","SAT","GW","UTCh","UTCm","GW-weight-unit","Fused-weight-unit","Fused-oil-unit","OilQT1-needle","OilQT2-needle","OilQT1","OilQT2","OilQT1-decimal","OilQT2-decimal","OilPSI1-needle","OilPSI2-needle","OilPSI1","OilPSI2"];
+        return ["TAT","SAT","GW","UTCh","UTCm","GW-weight-unit","Fused-weight-unit","OilQT1-needle","OilQT2-needle","OilQT1","OilQT2","OilQT1-decimal","OilQT2-decimal","OilPSI1-needle","OilPSI2-needle","OilPSI1","OilPSI2"];
     },
     update: func() {
         # Oil Quantity

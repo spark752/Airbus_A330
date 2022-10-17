@@ -14,6 +14,7 @@ var altitude = 0;
 setprop("/ECAM/left-msg", "NONE");
 setprop("/position/gear-agl-ft", 0);
 setprop("/ECAM/Lower/page", "fctl");
+setprop("/ECAM/Lower/previous_page", "");
 # w = White, b = Blue, g = Green, a = Amber, r = Red
 
 var ECAM = {
