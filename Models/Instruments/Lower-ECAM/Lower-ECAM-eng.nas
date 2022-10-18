@@ -6,9 +6,9 @@
 # Upper-ECAM.nas
 
 var canvas_lowerECAM_eng = {
-    new: func(canvas_group, file) {
+    new: func() {
         var m = {parents: [canvas_lowerECAM_eng, canvas_lowerECAM_base]};
-        m.init(canvas_group, file);
+        m.init("eng.svg");
         return m;
     },
     getKeys: func() {
@@ -24,7 +24,7 @@ var canvas_lowerECAM_eng = {
         me["OilQT2-decimal"].setText(sprintf("%s", int(10*math.mod(oil_quant2, 1))));
         me["OilQT1-needle"].setRotation((getprop("/ECAM/Lower/Oil-QT[0]") + 90) * D2R);
         me["OilQT2-needle"].setRotation((getprop("/ECAM/Lower/Oil-QT[1]") + 90) * D2R);
-        
+
         # Oil Pressure
         if (getprop("/engines/engine[0]/oil-psi-actual") >= 20) {
             me["OilPSI1"].setColor(0.0509,0.7529,0.2941);
@@ -33,7 +33,7 @@ var canvas_lowerECAM_eng = {
             me["OilPSI1"].setColor(1,0,0);
             me["OilPSI1-needle"].setColor(1,0,0);
         }
-        
+
         if (getprop("/engines/engine[1]/oil-psi-actual") >= 20) {
             me["OilPSI2"].setColor(0.0509,0.7529,0.2941);
             me["OilPSI2-needle"].setColor(0.0509,0.7529,0.2941);
@@ -41,20 +41,20 @@ var canvas_lowerECAM_eng = {
             me["OilPSI2"].setColor(1,0,0);
             me["OilPSI2-needle"].setColor(1,0,0);
         }
-        
+
         me["OilPSI1"].setText(sprintf("%s", math.round(getprop("/engines/engine[0]/oil-psi-actual"))));
         me["OilPSI2"].setText(sprintf("%s", math.round(getprop("/engines/engine[1]/oil-psi-actual"))));
-        
+
         me["OilPSI1-needle"].setRotation((getprop("/ECAM/Lower/Oil-PSI[0]") + 90) * D2R);
         me["OilPSI2-needle"].setRotation((getprop("/ECAM/Lower/Oil-PSI[1]") + 90) * D2R);
-        
+
         # Fuel Used (Not yet supported but the label is there)
         if (acconfig_weight_kgs.getValue() == 1) {
             me["Fused-weight-unit"].setText("KG");
         } else {
             me["Fused-weight-unit"].setText("LBS");
         }
-        
+
         me.updateBottomStatus();
     },
 };

@@ -4,15 +4,15 @@
 # Upper-ECAM.nas
 
 var canvas_lowerECAM_sts = {
-    new: func(canvas_group, file) {
+    new: func() {
         var m = {parents: [canvas_lowerECAM_sts, canvas_lowerECAM_base]};
-        m.init(canvas_group, file);
+        m.init("status.svg");
         return m;
     },
     getKeys: func() {
         return ["TAT","SAT","GW","UTCh","UTCm","GW-weight-unit"];
     },
     update: func() {
-        me.updateBottomStatus();    
-    },    
+        me.updateBottomStatus();
+    },
 };

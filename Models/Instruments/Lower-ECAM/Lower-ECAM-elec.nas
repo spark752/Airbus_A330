@@ -4,9 +4,9 @@
 # Upper-ECAM.nas
 
 var canvas_lowerECAM_elec = {
-    new: func(canvas_group, file) {
+    new: func() {
         var m = {parents: [canvas_lowerECAM_elec, canvas_lowerECAM_base]};
-        m.init(canvas_group, file);
+        m.init("elec.svg");
         return m;
     },
     getKeys: func() {
@@ -23,6 +23,21 @@ var canvas_lowerECAM_elec = {
         "APU-content", "APUGEN-off",
         "GEN1-content", "GEN1-off",
         "GEN2-content", "GEN2-off"];
+    },
+    initPage: func() {
+        # Currently unused things
+        me["IDG1-LOPR"].hide();
+        me["IDG1-DISC"].hide();
+        me["IDG2-LOPR"].hide();
+        me["IDG2-DISC"].hide();
+        me["IDG2-RISE-label"].hide();
+        me["IDG2-RISE-Value"].hide();
+        me["IDG1-RISE-label"].hide();
+        me["IDG1-RISE-Value"].hide();
+        me["Shed-label"].hide();
+        me["GalleyShed"].hide();
+        me["GLoad"].hide();
+        me["ACESS-SHED"].hide();
     },
     update: func() {
         # Battery 1
@@ -102,20 +117,6 @@ var canvas_lowerECAM_elec = {
             me["GEN2-off"].show();
             me["GEN2-content"].hide();
         }
-
-        # Miscellaneous
-        me["IDG1-LOPR"].hide();
-        me["IDG1-DISC"].hide();
-        me["IDG2-LOPR"].hide();
-        me["IDG2-DISC"].hide();
-        me["IDG2-RISE-label"].hide();
-        me["IDG2-RISE-Value"].hide();
-        me["IDG1-RISE-label"].hide();
-        me["IDG1-RISE-Value"].hide();
-        me["Shed-label"].hide();
-        me["GalleyShed"].hide();
-        me["GLoad"].hide();
-        me["ACESS-SHED"].hide();
 
         me.updateBottomStatus();
     },

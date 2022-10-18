@@ -2,14 +2,7 @@
 
 # Copyright (c) 2020 Josh Davidson (Octal450)
 
-var lowerECAM_apu = nil;
-var lowerECAM_eng = nil;
-var lowerECAM_fctl = nil;
-var lowerECAM_sts = nil;
-var lowerECAM_elec = nil;
-var lowerECAM_test = nil;
-var lowerECAM_display = nil;
-var elapsedtime = 0;
+# Initialize properties
 setprop("/systems/electrical/extra/apu-load", 0);
 setprop("/systems/electrical/extra/apu-volts", 0);
 setprop("/systems/electrical/extra/apu-hz", 0);
@@ -38,41 +31,146 @@ setprop("/instrumentation/du/du4-test-amount", 0);
 
 # A330-main.xml puts this in the same namespace as Upper-ECAM.nas which
 # includes definitions for:
-# LBS2KGS
 # acconfig_weight_kgs
 
+# Base class for pages other than self test
 var canvas_lowerECAM_base = {
-    init: func(canvas_group, file) {
+    init: func(file) {
         var font_mapper = func(family, weight) {
             return "LiberationFonts/LiberationSans-Regular.ttf";
         };
+        var canvas_group = lowerECAM_controller.createGroup();
+        canvas.parsesvg(canvas_group, "Aircraft/Airbus_A330/Models/Instruments/Lower-ECAM/res/" ~ file, {"font-mapper": font_mapper});
 
+        var svg_keys = me.getKeys();
+        foreach(var key; svg_keys) {
+            me[key] = canvas_group.getElementById(key);
+        }
+        me.page = canvas_group;
+        return me;
+    },
+    getKeys: func() {
+        return [];
+    },
+    initPage: func() {
+    },
+    updateBottomStatus: func() {
+        me["TAT"].setText(sprintf("%2.0f", getprop("/environment/temperature-degc")));
+        me["SAT"].setText(sprintf("%2.0f", getprop("/environment/temperature-degc")));
+        me["UTCh"].setText(sprintf("%02d", getprop("/sim/time/utc/hour")));
+        me["UTCm"].setText(sprintf("%02d", getprop("/sim/time/utc/minute")));
+        if (acconfig_weight_kgs.getValue() == 1) {
+            # LB2KG is a FlightGear global constant
+            me["GW-weight-unit"].setText("KG");
+            me["GW"].setText(sprintf("%s", math.round(getprop("/FMGC/internal/gw") * LB2KG, 10)));
+        } else {
+            me["GW"].setText(sprintf("%s", math.round(getprop("/FMGC/internal/gw"))));
+            me["GW-weight-unit"].setText("LBS");
+        }
+    },
+};
+
+# Self test page
+var canvas_lowerECAM_test = {
+    init: func(file) {
+        var font_mapper = func(family, weight) {
+            return "LiberationFonts/LiberationSans-Regular.ttf";
+        };
+        var canvas_group = lowerECAM_controller.createGroup();
         canvas.parsesvg(canvas_group, file, {"font-mapper": font_mapper});
 
         var svg_keys = me.getKeys();
         foreach(var key; svg_keys) {
             me[key] = canvas_group.getElementById(key);
         }
-
         me.page = canvas_group;
-
         return me;
     },
+    new: func() {
+        var m = {parents: [canvas_lowerECAM_test]};
+        m.init("Aircraft/Airbus_A330/Models/Instruments/Common/res/du-test.svg");
+        return m;
+    },
     getKeys: func() {
-        return [];
+        return ["Test_white","Test_text"];
     },
     update: func() {
-        elapsedtime = getprop("/sim/time/elapsed-sec");
+        var elapsed_time = getprop("/sim/time/elapsed-sec");
+        if (getprop("/instrumentation/du/du4-test-time") + 1 >= elapsed_time) {
+            me["Test_white"].show();
+            me["Test_text"].hide();
+        } else {
+            me["Test_white"].hide();
+            me["Test_text"].show();
+        }
+    },
+};
+
+# Controller for updating display
+var lowerECAM_controller = {
+    display: nil,
+    test_page: nil,
+    page_hash: {},
+    init: func() {
+        me.display = canvas.new({
+            "name": "lowerECAM",
+            "size": [1024, 1024],
+            "view": [1024, 1024],
+            "mipmapping": 1
+        });
+        me.display.addPlacement({"node": "lecam.screen"});
+        me.test_page = canvas_lowerECAM_test.new();
+
+        # Map property name to page object
+        var apu_obj = canvas_lowerECAM_apu.new();
+        var eng_obj = canvas_lowerECAM_eng.new();
+        var fctl_obj = canvas_lowerECAM_fctl.new();
+        var sts_obj = canvas_lowerECAM_sts.new();
+        var elec_obj = canvas_lowerECAM_elec.new();
+        var hyd_obj = canvas_lowerECAM_hyd.new();
+        var wheel_obj = canvas_lowerECAM_wheel.new();
+        var fuel_obj = canvas_lowerECAM_fuel.new();
+        me.page_hash = {
+            "apu" : apu_obj,
+            "eng" : eng_obj,
+            "fctl" : fctl_obj,
+            "sts" : sts_obj,
+            "elec" : elec_obj,
+            "hyd" : hyd_obj,
+            "wheel" : wheel_obj,
+            "fuel" : fuel_obj,
+        };
+
+        # Initialization for pages to hide never used labels etc.
+        foreach(var key; keys(me.page_hash)) {
+            me.page_hash[key].initPage();
+        }        
+        
+        lowerECAM_update.start();
+        if (getprop("/systems/acconfig/options/lecam-rate") > 1) {
+            l_rateApply();
+        }
+    },
+    hideAllPages: func() {
+        me.test_page.page.hide();
+        foreach(var key; keys(me.page_hash)) {
+            me.page_hash[key].page.hide();
+        }
+    },
+    update: func() {
+        var elapsed_time = getprop("/sim/time/elapsed-sec");
         if (getprop("/systems/electrical/bus/ac2") >= 110) {
             if (getprop("/gear/gear[0]/wow") == 1) {
                 if (getprop("/systems/acconfig/autoconfig-running") != 1 and getprop("/instrumentation/du/du4-test") != 1) {
                     setprop("/instrumentation/du/du4-test", 1);
-                    setprop("/instrumentation/du/du4-test-amount", math.round((rand() * 5 ) + 35, 0.1));
-                    setprop("/instrumentation/du/du4-test-time", getprop("/sim/time/elapsed-sec"));
+                    setprop("/instrumentation/du/du4-test-amount",
+                        math.round((rand() * 5 ) + 35, 0.1));
+                    setprop("/instrumentation/du/du4-test-time", elapsed_time);
                 } else if (getprop("/systems/acconfig/autoconfig-running") == 1 and getprop("/instrumentation/du/du4-test") != 1) {
                     setprop("/instrumentation/du/du4-test", 1);
                     setprop("/instrumentation/du/du4-test-amount", math.round((rand() * 5 ) + 35, 0.1));
-                    setprop("/instrumentation/du/du4-test-time", getprop("/sim/time/elapsed-sec") - 30);
+                    setprop("/instrumentation/du/du4-test-time",
+                        elapsed_time - 30);
                 }
             } else {
                 setprop("/instrumentation/du/du4-test", 1);
@@ -82,111 +180,63 @@ var canvas_lowerECAM_base = {
         } else if (getprop("/systems/electrical/ac1-src") == "XX" or getprop("/systems/electrical/ac2-src") == "XX") {
             setprop("/instrumentation/du/du4-test", 0);
         }
-        
+
         if (getprop("/systems/electrical/bus/ac2") >= 110 and getprop("/controls/lighting/DU/du4") > 0.01) {
-            if (getprop("/instrumentation/du/du4-test-time") + getprop("/instrumentation/du/du4-test-amount") >= elapsedtime) {
-                me.hideAllPages();
-                lowerECAM_test.page.show();
-                lowerECAM_test.update();
+            if (getprop("/instrumentation/du/du4-test-time") + getprop("/instrumentation/du/du4-test-amount") >= elapsed_time) {
+                lowerECAM_controller.hideAllPages();
+                me.test_page.page.show();
+                me.test_page.update();
             } else {
-                lowerECAM_test.page.hide();
-                var page = getprop("/ECAM/Lower/page");
+                me.test_page.page.hide();
+                var page_name = getprop("/ECAM/Lower/page");
                 var previous_page = getprop("/ECAM/Lower/previous_page");
-                if (page != previous_page) {
-                    if (previous_page == "apu") {
-                        lowerECAM_apu.page.hide();
-                    } else if (previous_page == "eng") {
-                        lowerECAM_eng.page.hide();
-                    } else if (previous_page == "fctl") {
-                        lowerECAM_fctl.page.hide();
-                    } else if (previous_page == "elec") {
-                        lowerECAM_elec.page.hide();
+                if (page_name != previous_page) {
+                    var lookup = me.page_hash[previous_page];
+                    if (lookup != nil) {
+                        lookup.page.hide();
                     } else {
-                        lowerECAM_sts.page.hide();
+                        # Default to status page for unsupported page names
+                        me.page_hash["sts"].page.hide();
                     }
-                    setprop("/ECAM/Lower/previous_page", page);
+                    setprop("/ECAM/Lower/previous_page", page_name);
                 }
-                if (page == "apu") {
-                    lowerECAM_apu.page.show();
-                    lowerECAM_apu.update();
-                } else if (page == "eng") {
-                    lowerECAM_eng.page.show();
-                    lowerECAM_eng.update();
-                } else if (page == "fctl") {
-                    lowerECAM_fctl.page.show();
-                    lowerECAM_fctl.update();
-                } else if (page == "elec") {
-                    lowerECAM_elec.page.show();
-                    lowerECAM_elec.update();
+                var lookup = me.page_hash[page_name];
+                if (lookup != nil) {
+                    lookup.page.show();
+                    lookup.update();
                 } else {
-                    lowerECAM_sts.page.show();                    
-                    lowerECAM_sts.update();                    
+                    # Default to status page for unsupported page names
+                    me.page_hash["sts"].page.show();
+                    me.page_hash["sts"].update();
                 }
             }
         } else {
-            me.hideAllPages();
+            lowerECAM_controller.hideAllPages();
         }
     },
-    updateBottomStatus: func() {
-        me["TAT"].setText(sprintf("%2.0f", getprop("/environment/temperature-degc")));
-        me["SAT"].setText(sprintf("%2.0f", getprop("/environment/temperature-degc")));
-        me["UTCh"].setText(sprintf("%02d", getprop("/sim/time/utc/hour")));
-        me["UTCm"].setText(sprintf("%02d", getprop("/sim/time/utc/minute")));
-        if (acconfig_weight_kgs.getValue() == 1) {
-            me["GW-weight-unit"].setText("KG");
-            me["GW"].setText(sprintf("%s", math.round(getprop("/FMGC/internal/gw") * LBS2KGS, 10)));             
-        } else {
-            me["GW"].setText(sprintf("%s", math.round(getprop("/FMGC/internal/gw"))));        
-            me["GW-weight-unit"].setText("LBS");
-        }
+    showECAM: func() {
+        var dlg = canvas.Window.new([512, 512], "dialog").set("resize", 1);
+        dlg.setCanvas(me.display);
     },
-    hideAllPages: func() {
-        lowerECAM_test.page.hide();
-        lowerECAM_apu.page.hide();
-        lowerECAM_eng.page.hide();
-        lowerECAM_fctl.page.hide();
-        lowerECAM_sts.page.hide();    
-        lowerECAM_elec.page.hide();    
+    createGroup: func() {
+        return me.display.createGroup();
     },
 };
 
 setlistener("sim/signals/fdm-initialized", func {
-    lowerECAM_display = canvas.new({
-        "name": "lowerECAM",
-        "size": [1024, 1024],
-        "view": [1024, 1024],
-        "mipmapping": 1
-    });
-    lowerECAM_display.addPlacement({"node": "lecam.screen"});
-    var groupApu = lowerECAM_display.createGroup();
-    var groupEng = lowerECAM_display.createGroup();
-    var groupFctl = lowerECAM_display.createGroup();
-    var groupSts = lowerECAM_display.createGroup();
-    var groupElec = lowerECAM_display.createGroup();
-    var group_test = lowerECAM_display.createGroup();
-
-    lowerECAM_apu = canvas_lowerECAM_apu.new(groupApu, "Aircraft/Airbus_A330/Models/Instruments/Lower-ECAM/res/apu.svg");
-    lowerECAM_eng = canvas_lowerECAM_eng.new(groupEng, "Aircraft/Airbus_A330/Models/Instruments/Lower-ECAM/res/eng.svg");
-    lowerECAM_fctl = canvas_lowerECAM_fctl.new(groupFctl, "Aircraft/Airbus_A330/Models/Instruments/Lower-ECAM/res/fctl.svg");
-    lowerECAM_sts = canvas_lowerECAM_sts.new(groupSts, "Aircraft/Airbus_A330/Models/Instruments/Lower-ECAM/res/status.svg");
-    lowerECAM_elec = canvas_lowerECAM_elec.new(groupElec, "Aircraft/Airbus_A330/Models/Instruments/Lower-ECAM/res/elec.svg");
-    lowerECAM_test = canvas_lowerECAM_test.new(group_test, "Aircraft/Airbus_A330/Models/Instruments/Common/res/du-test.svg");
-    
-    lowerECAM_update.start();
-    if (getprop("/systems/acconfig/options/lecam-rate") > 1) {
-        l_rateApply();
-    }
+    lowerECAM_controller.init();
 });
 
+var lowerECAM_update = maketimer(0.05, func {
+    lowerECAM_controller.update();
+});
+
+# Called by AircraftConfig/du-quality.xml
 var l_rateApply = func {
     lowerECAM_update.restart(0.05 * getprop("/systems/acconfig/options/lecam-rate"));
 }
 
-var lowerECAM_update = maketimer(0.05, func {
-    canvas_lowerECAM_base.update();
-});
-
+# Called by Lower-ECAM.xml
 var showLowerECAM = func {
-    var dlg = canvas.Window.new([512, 512], "dialog").set("resize", 1);
-    dlg.setCanvas(lowerECAM_display);
+    lowerECAM_controller.showECAM();
 }

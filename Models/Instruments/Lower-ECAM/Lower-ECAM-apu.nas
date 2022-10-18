@@ -6,9 +6,9 @@
 # Upper-ECAM.nas
 
 var canvas_lowerECAM_apu = {
-    new: func(canvas_group, file) {
+    new: func() {
         var m = {parents: [canvas_lowerECAM_apu, canvas_lowerECAM_base]};
-        m.init(canvas_group, file);
+        m.init("apu.svg");
 
         return m;
     },
@@ -18,7 +18,7 @@ var canvas_lowerECAM_apu = {
     },
     update: func() {
         oat = getprop("/environment/temperature-degc");
-        
+
         # Avail and Flap Open
         if (getprop("/systems/apu/flap") == 1) {
             me["APUFlapOpen"].show();
@@ -31,13 +31,13 @@ var canvas_lowerECAM_apu = {
         } else {
             me["APUAvail"].hide();
         }
-        
+
         if (getprop("/fdm/jsbsim/propulsion/tank[2]/contents-lbs") < 100) {
             me["APUfuelLO"].show();
         } else {
             me["APUfuelLO"].hide();
         }
-        
+
         # APU Gen
         if (getprop("/systems/electrical/extra/apu-volts") > 110) {
             me["APUGenVolt"].setColor(0.0509,0.7529,0.2941);
@@ -50,7 +50,7 @@ var canvas_lowerECAM_apu = {
         } else {
             me["APUGenHz"].setColor(0.7333,0.3803,0);
         }
-        
+
         if (getprop("/controls/APU/master") == 1 or getprop("/systems/apu/rpm") >= 94.9) {
             me["APUGenbox"].show();
             me["APUGenHz"].show();
@@ -68,16 +68,16 @@ var canvas_lowerECAM_apu = {
             me["text3728"].hide();
             me["text3732"].hide();
         }
-        
+
         if ((getprop("/systems/apu/rpm") > 94.9) and (getprop("/controls/electrical/switches/gen-apu") == 1)) {
             me["APUGenOnline"].show();
         } else {
             me["APUGenOnline"].hide();
         }
-        
+
         if ((getprop("/controls/APU/master") == 0) or ((getprop("/controls/APU/master") == 1) and (getprop("/controls/electrical/switches/gen-apu") == 1) and (getprop("/systems/apu/rpm") > 94.9))) {
             me["APUGentext"].setColor(0.8078,0.8039,0.8078);
-        } else if ((getprop("/controls/APU/master") == 1) and (getprop("/controls/electrical/switches/gen-apu") == 0) and (getprop("/systems/apu/rpm") < 94.9)) { 
+        } else if ((getprop("/controls/APU/master") == 1) and (getprop("/controls/electrical/switches/gen-apu") == 0) and (getprop("/systems/apu/rpm") < 94.9)) {
             me["APUGentext"].setColor(0.7333,0.3803,0);
         }
 
