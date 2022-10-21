@@ -5,6 +5,9 @@
 # A330-main.xml puts this in the same namespace as Lower-ECAM.nas and
 # Upper-ECAM.nas
 
+# Performance debug average of ten averages = 680 uS, slow compared to others.
+# TODO: Optimize this!
+
 var canvas_lowerECAM_fctl = {
     new: func() {
         var m = {parents: [canvas_lowerECAM_fctl, canvas_lowerECAM_base]};

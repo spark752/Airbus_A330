@@ -46,6 +46,7 @@ var canvas_lowerECAM_fuel = {
             "GLoad",
         ];
     },
+    monitor_hash: {},
     initPage: func() {
         # Currently unused things
         me["FUEL-Center-blocked"].hide();
@@ -60,12 +61,37 @@ var canvas_lowerECAM_fuel = {
         me["FUEL-APU-arrow"].hide();
         me["FUEL-APU-line"].hide();
         me["GLoad"].hide();
-    },
+
+        # Monitor things that seldom change
+        me.monitor_hash["pump-L1-fault"] =
+            lowerECAM_monitor.new("/systems/fuel/tank0pump1-fault");
+        me.monitor_hash["pump-L2-fault"] =
+            lowerECAM_monitor.new("/systems/fuel/tank0pump2-fault");
+        me.monitor_hash["pump-C1-fault"] =
+            lowerECAM_monitor.new("/systems/fuel/tank1pump1-fault");
+        me.monitor_hash["pump-C2-fault"] =
+            lowerECAM_monitor.new("/systems/fuel/tank1pump2-fault");
+        me.monitor_hash["pump-R1-fault"] =
+            lowerECAM_monitor.new("/systems/fuel/tank2pump1-fault");
+        me.monitor_hash["pump-R2-fault"] =
+            lowerECAM_monitor.new("/systems/fuel/tank2pump2-fault");
+        me.monitor_hash["x-feed"] =
+            lowerECAM_monitor.new("/systems/fuel/x-feed");
+        me.monitor_hash["engine-1-cutoff"] =
+            lowerECAM_monitor.new("/controls/engines/engine[0]/cutoff");
+        me.monitor_hash["engine-2-cutoff"] =
+            lowerECAM_monitor.new("/controls/engines/engine[1]/cutoff");
+        },
     update: func() {
+        # Monitor things that seldom change
+        foreach(var key; keys(me.monitor_hash)) {
+            me.monitor_hash[key].update();
+        }
+
         # Quantities
         # Real display has inner/outer tanks, collector cells, and trim tanks,
         # but these things are not currently implemented by the model.
-        if (acconfig_weight_kgs.getValue() == 1) {
+        if (me.weight_kgs_used) {
             me["FOB-weight-unit"].setText("KG");
             me["FUEL-On-Board"].setText(sprintf("%s",
                 math.round(getprop("/consumables/fuel/total-fuel-kg"), 10)));
@@ -103,30 +129,36 @@ var canvas_lowerECAM_fuel = {
             math.round(getprop("/consumables/fuel/tank[2]/temperature_degC"))));
 
         # Valves
-        if (getprop("/systems/fuel/x-feed")) {
-            me["FUEL-XFEED-On"].show();
-            me["FUEL-XFEED-Off"].hide();
-            me["FUEL-XFEED-Left"].show();
-            me["FUEL-XFEED-Right"].show();
-        } else {
-            me["FUEL-XFEED-On"].hide();
-            me["FUEL-XFEED-Off"].show();
-            me["FUEL-XFEED-Left"].hide();
-            me["FUEL-XFEED-Right"].hide();
+        if (me.monitor_hash["x-feed"].test()) {
+            if (me.monitor_hash["x-feed"].value) {
+                me["FUEL-XFEED-On"].show();
+                me["FUEL-XFEED-Off"].hide();
+                me["FUEL-XFEED-Left"].show();
+                me["FUEL-XFEED-Right"].show();
+            } else {
+                me["FUEL-XFEED-On"].hide();
+                me["FUEL-XFEED-Off"].show();
+                me["FUEL-XFEED-Left"].hide();
+                me["FUEL-XFEED-Right"].hide();
+            }
         }
-        if (getprop("/controls/engines/engine[0]/cutoff")) {
-            me["FUEL-ENG-Master-1-Off"].show();
-            me["FUEL-ENG-Master-1-On"].hide();
-        } else {
-            me["FUEL-ENG-Master-1-Off"].hide();
-            me["FUEL-ENG-Master-1-On"].show();
+        if (me.monitor_hash["engine-1-cutoff"].test()) {
+            if (me.monitor_hash["engine-1-cutoff"].value) {
+                me["FUEL-ENG-Master-1-Off"].show();
+                me["FUEL-ENG-Master-1-On"].hide();
+            } else {
+                me["FUEL-ENG-Master-1-Off"].hide();
+                me["FUEL-ENG-Master-1-On"].show();
+            }
         }
-        if (getprop("/controls/engines/engine[1]/cutoff")) {
-            me["FUEL-ENG-Master-2-Off"].show();
-            me["FUEL-ENG-Master-2-On"].hide();
-        } else {
-            me["FUEL-ENG-Master-2-Off"].hide();
-            me["FUEL-ENG-Master-2-On"].show();
+        if (me.monitor_hash["engine-2-cutoff"].test()) {
+            if (me.monitor_hash["engine-2-cutoff"].value) {
+                me["FUEL-ENG-Master-2-Off"].show();
+                me["FUEL-ENG-Master-2-On"].hide();
+            } else {
+                me["FUEL-ENG-Master-2-Off"].hide();
+                me["FUEL-ENG-Master-2-On"].show();
+            }
         }
 
         # Wing Pumps
@@ -138,10 +170,10 @@ var canvas_lowerECAM_fuel = {
         var right_pump1_switch = getprop("/controls/fuel/tank2pump1");
         var right_pump2_switch = getprop("/controls/fuel/tank2pump2");
         var right_pump3_switch = getprop("/controls/fuel/tank2pump3");
-        var left_pump1_fault = getprop("/systems/fuel/tank0pump1-fault");
-        var left_pump2_fault = getprop("/systems/fuel/tank0pump2-fault");
-        var right_pump1_fault = getprop("/systems/fuel/tank2pump1-fault");
-        var right_pump2_fault = getprop("/systems/fuel/tank2pump2-fault");
+        var left_pump1_fault = me.monitor_hash["pump-L1-fault"].value;
+        var left_pump2_fault = me.monitor_hash["pump-L2-fault"].value;
+        var right_pump1_fault = me.monitor_hash["pump-R1-fault"].value;
+        var right_pump2_fault = me.monitor_hash["pump-R2-fault"].value;
         if (left_pump1_switch == 1) {
             me["FUEL-Pump-Left-1-Open"].show();
             me["FUEL-Pump-Left-1-Closed"].hide();
@@ -149,20 +181,22 @@ var canvas_lowerECAM_fuel = {
             me["FUEL-Pump-Left-1-Open"].hide();
             me["FUEL-Pump-Left-1-Closed"].show();
         }
-        if (left_pump1_fault == 1) {
-            me["FUEL-Pump-Left-1-1"].setColorFill(0.7333,0.3803,0);
-            me["FUEL-Pump-Left-1-2"].setColorFill(0.7333,0.3803,0);
-            me["FUEL-Pump-Left-1-3"].setColorFill(0.7333,0.3803,0);
-            me["FUEL-Pump-Left-1-4"].setColorFill(0.7333,0.3803,0);
-            me["FUEL-Pump-Left-1-Open"].setColorFill(0.7333,0.3803,0);
-            me["FUEL-Pump-Left-1-Closed"].setColorFill(0.7333,0.3803,0);
-        } else {
-            me["FUEL-Pump-Left-1-1"].setColorFill(0.0509,0.7529,0.2941);
-            me["FUEL-Pump-Left-1-2"].setColorFill(0.0509,0.7529,0.2941);
-            me["FUEL-Pump-Left-1-3"].setColorFill(0.0509,0.7529,0.2941);
-            me["FUEL-Pump-Left-1-4"].setColorFill(0.0509,0.7529,0.2941);
-            me["FUEL-Pump-Left-1-Open"].setColorFill(0.0509,0.7529,0.2941);
-            me["FUEL-Pump-Left-1-Closed"].setColorFill(0.0509,0.7529,0.2941);
+        if (me.monitor_hash["pump-L1-fault"].test()) {
+            if (left_pump1_fault == 1) {
+                me["FUEL-Pump-Left-1-1"].setColorFill(0.7333,0.3803,0);
+                me["FUEL-Pump-Left-1-2"].setColorFill(0.7333,0.3803,0);
+                me["FUEL-Pump-Left-1-3"].setColorFill(0.7333,0.3803,0);
+                me["FUEL-Pump-Left-1-4"].setColorFill(0.7333,0.3803,0);
+                me["FUEL-Pump-Left-1-Open"].setColorFill(0.7333,0.3803,0);
+                me["FUEL-Pump-Left-1-Closed"].setColorFill(0.7333,0.3803,0);
+            } else {
+                me["FUEL-Pump-Left-1-1"].setColorFill(0.0509,0.7529,0.2941);
+                me["FUEL-Pump-Left-1-2"].setColorFill(0.0509,0.7529,0.2941);
+                me["FUEL-Pump-Left-1-3"].setColorFill(0.0509,0.7529,0.2941);
+                me["FUEL-Pump-Left-1-4"].setColorFill(0.0509,0.7529,0.2941);
+                me["FUEL-Pump-Left-1-Open"].setColorFill(0.0509,0.7529,0.2941);
+                me["FUEL-Pump-Left-1-Closed"].setColorFill(0.0509,0.7529,0.2941);
+            }
         }
         if (left_pump2_switch == 1) {
             me["FUEL-Pump-Left-2-Open"].show();
@@ -171,20 +205,22 @@ var canvas_lowerECAM_fuel = {
             me["FUEL-Pump-Left-2-Open"].hide();
             me["FUEL-Pump-Left-2-Closed"].show();
         }
-        if (left_pump2_fault == 1) {
-            me["FUEL-Pump-Left-2-1"].setColorFill(0.7333,0.3803,0);
-            me["FUEL-Pump-Left-2-2"].setColorFill(0.7333,0.3803,0);
-            me["FUEL-Pump-Left-2-3"].setColorFill(0.7333,0.3803,0);
-            me["FUEL-Pump-Left-2-4"].setColorFill(0.7333,0.3803,0);
-            me["FUEL-Pump-Left-2-Open"].setColorFill(0.7333,0.3803,0);
-            me["FUEL-Pump-Left-2-Closed"].setColorFill(0.7333,0.3803,0);
-        } else {
-            me["FUEL-Pump-Left-2-1"].setColorFill(0.0509,0.7529,0.2941);
-            me["FUEL-Pump-Left-2-2"].setColorFill(0.0509,0.7529,0.2941);
-            me["FUEL-Pump-Left-2-3"].setColorFill(0.0509,0.7529,0.2941);
-            me["FUEL-Pump-Left-2-4"].setColorFill(0.0509,0.7529,0.2941);
-            me["FUEL-Pump-Left-2-Open"].setColorFill(0.0509,0.7529,0.2941);
-            me["FUEL-Pump-Left-2-Closed"].setColorFill(0.0509,0.7529,0.2941);
+        if (me.monitor_hash["pump-L2-fault"].test()) {
+            if (left_pump2_fault == 1) {
+                me["FUEL-Pump-Left-2-1"].setColorFill(0.7333,0.3803,0);
+                me["FUEL-Pump-Left-2-2"].setColorFill(0.7333,0.3803,0);
+                me["FUEL-Pump-Left-2-3"].setColorFill(0.7333,0.3803,0);
+                me["FUEL-Pump-Left-2-4"].setColorFill(0.7333,0.3803,0);
+                me["FUEL-Pump-Left-2-Open"].setColorFill(0.7333,0.3803,0);
+                me["FUEL-Pump-Left-2-Closed"].setColorFill(0.7333,0.3803,0);
+            } else {
+                me["FUEL-Pump-Left-2-1"].setColorFill(0.0509,0.7529,0.2941);
+                me["FUEL-Pump-Left-2-2"].setColorFill(0.0509,0.7529,0.2941);
+                me["FUEL-Pump-Left-2-3"].setColorFill(0.0509,0.7529,0.2941);
+                me["FUEL-Pump-Left-2-4"].setColorFill(0.0509,0.7529,0.2941);
+                me["FUEL-Pump-Left-2-Open"].setColorFill(0.0509,0.7529,0.2941);
+                me["FUEL-Pump-Left-2-Closed"].setColorFill(0.0509,0.7529,0.2941);
+            }
         }
         if (left_pump3_switch == 1 and
                 (left_pump1_switch != 1 or left_pump2_switch != 1 or
@@ -202,20 +238,22 @@ var canvas_lowerECAM_fuel = {
             me["FUEL-Pump-Right-1-Open"].hide();
             me["FUEL-Pump-Right-1-Closed"].show();
         }
-        if (right_pump1_fault == 1) {
-            me["FUEL-Pump-Right-1-1"].setColorFill(0.7333,0.3803,0);
-            me["FUEL-Pump-Right-1-2"].setColorFill(0.7333,0.3803,0);
-            me["FUEL-Pump-Right-1-3"].setColorFill(0.7333,0.3803,0);
-            me["FUEL-Pump-Right-1-4"].setColorFill(0.7333,0.3803,0);
-            me["FUEL-Pump-Right-1-Open"].setColorFill(0.7333,0.3803,0);
-            me["FUEL-Pump-Right-1-Closed"].setColorFill(0.7333,0.3803,0);
-        } else {
-            me["FUEL-Pump-Right-1-1"].setColorFill(0.0509,0.7529,0.2941);
-            me["FUEL-Pump-Right-1-2"].setColorFill(0.0509,0.7529,0.2941);
-            me["FUEL-Pump-Right-1-3"].setColorFill(0.0509,0.7529,0.2941);
-            me["FUEL-Pump-Right-1-4"].setColorFill(0.0509,0.7529,0.2941);
-            me["FUEL-Pump-Right-1-Open"].setColorFill(0.0509,0.7529,0.2941);
-            me["FUEL-Pump-Right-1-Closed"].setColorFill(0.0509,0.7529,0.2941);
+        if (me.monitor_hash["pump-R1-fault"].test()) {
+            if (right_pump1_fault == 1) {
+                me["FUEL-Pump-Right-1-1"].setColorFill(0.7333,0.3803,0);
+                me["FUEL-Pump-Right-1-2"].setColorFill(0.7333,0.3803,0);
+                me["FUEL-Pump-Right-1-3"].setColorFill(0.7333,0.3803,0);
+                me["FUEL-Pump-Right-1-4"].setColorFill(0.7333,0.3803,0);
+                me["FUEL-Pump-Right-1-Open"].setColorFill(0.7333,0.3803,0);
+                me["FUEL-Pump-Right-1-Closed"].setColorFill(0.7333,0.3803,0);
+            } else {
+                me["FUEL-Pump-Right-1-1"].setColorFill(0.0509,0.7529,0.2941);
+                me["FUEL-Pump-Right-1-2"].setColorFill(0.0509,0.7529,0.2941);
+                me["FUEL-Pump-Right-1-3"].setColorFill(0.0509,0.7529,0.2941);
+                me["FUEL-Pump-Right-1-4"].setColorFill(0.0509,0.7529,0.2941);
+                me["FUEL-Pump-Right-1-Open"].setColorFill(0.0509,0.7529,0.2941);
+                me["FUEL-Pump-Right-1-Closed"].setColorFill(0.0509,0.7529,0.2941);
+            }
         }
         if (right_pump2_switch == 1) {
             me["FUEL-Pump-Right-2-Open"].show();
@@ -224,20 +262,22 @@ var canvas_lowerECAM_fuel = {
             me["FUEL-Pump-Right-2-Open"].hide();
             me["FUEL-Pump-Right-2-Closed"].show();
         }
-        if (right_pump2_fault == 1) {
-            me["FUEL-Pump-Right-2-1"].setColorFill(0.7333,0.3803,0);
-            me["FUEL-Pump-Right-2-2"].setColorFill(0.7333,0.3803,0);
-            me["FUEL-Pump-Right-2-3"].setColorFill(0.7333,0.3803,0);
-            me["FUEL-Pump-Right-2-4"].setColorFill(0.7333,0.3803,0);
-            me["FUEL-Pump-Right-2-Open"].setColorFill(0.7333,0.3803,0);
-            me["FUEL-Pump-Right-2-Closed"].setColorFill(0.7333,0.3803,0);
-        } else {
-            me["FUEL-Pump-Right-2-1"].setColorFill(0.0509,0.7529,0.2941);
-            me["FUEL-Pump-Right-2-2"].setColorFill(0.0509,0.7529,0.2941);
-            me["FUEL-Pump-Right-2-3"].setColorFill(0.0509,0.7529,0.2941);
-            me["FUEL-Pump-Right-2-4"].setColorFill(0.0509,0.7529,0.2941);
-            me["FUEL-Pump-Right-2-Open"].setColorFill(0.0509,0.7529,0.2941);
-            me["FUEL-Pump-Right-2-Closed"].setColorFill(0.0509,0.7529,0.2941);
+        if (me.monitor_hash["pump-R2-fault"].test()) {
+            if (right_pump2_fault == 1) {
+                me["FUEL-Pump-Right-2-1"].setColorFill(0.7333,0.3803,0);
+                me["FUEL-Pump-Right-2-2"].setColorFill(0.7333,0.3803,0);
+                me["FUEL-Pump-Right-2-3"].setColorFill(0.7333,0.3803,0);
+                me["FUEL-Pump-Right-2-4"].setColorFill(0.7333,0.3803,0);
+                me["FUEL-Pump-Right-2-Open"].setColorFill(0.7333,0.3803,0);
+                me["FUEL-Pump-Right-2-Closed"].setColorFill(0.7333,0.3803,0);
+            } else {
+                me["FUEL-Pump-Right-2-1"].setColorFill(0.0509,0.7529,0.2941);
+                me["FUEL-Pump-Right-2-2"].setColorFill(0.0509,0.7529,0.2941);
+                me["FUEL-Pump-Right-2-3"].setColorFill(0.0509,0.7529,0.2941);
+                me["FUEL-Pump-Right-2-4"].setColorFill(0.0509,0.7529,0.2941);
+                me["FUEL-Pump-Right-2-Open"].setColorFill(0.0509,0.7529,0.2941);
+                me["FUEL-Pump-Right-2-Closed"].setColorFill(0.0509,0.7529,0.2941);
+            }
         }
         if (right_pump3_switch == 1 and
                 (right_pump1_switch != 1 or right_pump2_switch != 1 or
@@ -271,35 +311,39 @@ var canvas_lowerECAM_fuel = {
             me["FUEL-Pump-Center-2-Open"].hide();
             me["FUEL-Pump-Center-2-Closed"].show();
         }
-        if (getprop("/systems/fuel/tank1pump1-fault") == 1) {
-            me["FUEL-Pump-Center-1-1"].setColorFill(0.7333,0.3803,0);
-            me["FUEL-Pump-Center-1-2"].setColorFill(0.7333,0.3803,0);
-            me["FUEL-Pump-Center-1-3"].setColorFill(0.7333,0.3803,0);
-            me["FUEL-Pump-Center-1-4"].setColorFill(0.7333,0.3803,0);
-            me["FUEL-Pump-Center-1-Open"].setColorFill(0.7333,0.3803,0);
-            me["FUEL-Pump-Center-1-Closed"].setColorFill(0.7333,0.3803,0);
-        } else {
-            me["FUEL-Pump-Center-1-1"].setColorFill(0.0509,0.7529,0.2941);
-            me["FUEL-Pump-Center-1-2"].setColorFill(0.0509,0.7529,0.2941);
-            me["FUEL-Pump-Center-1-3"].setColorFill(0.0509,0.7529,0.2941);
-            me["FUEL-Pump-Center-1-4"].setColorFill(0.0509,0.7529,0.2941);
-            me["FUEL-Pump-Center-1-Open"].setColorFill(0.0509,0.7529,0.2941);
-            me["FUEL-Pump-Center-1-Closed"].setColorFill(0.0509,0.7529,0.2941);
+        if (me.monitor_hash["pump-C1-fault"].test()) {
+            if (me.monitor_hash["pump-C1-fault"].value == 1) {
+                me["FUEL-Pump-Center-1-1"].setColorFill(0.7333,0.3803,0);
+                me["FUEL-Pump-Center-1-2"].setColorFill(0.7333,0.3803,0);
+                me["FUEL-Pump-Center-1-3"].setColorFill(0.7333,0.3803,0);
+                me["FUEL-Pump-Center-1-4"].setColorFill(0.7333,0.3803,0);
+                me["FUEL-Pump-Center-1-Open"].setColorFill(0.7333,0.3803,0);
+                me["FUEL-Pump-Center-1-Closed"].setColorFill(0.7333,0.3803,0);
+            } else {
+                me["FUEL-Pump-Center-1-1"].setColorFill(0.0509,0.7529,0.2941);
+                me["FUEL-Pump-Center-1-2"].setColorFill(0.0509,0.7529,0.2941);
+                me["FUEL-Pump-Center-1-3"].setColorFill(0.0509,0.7529,0.2941);
+                me["FUEL-Pump-Center-1-4"].setColorFill(0.0509,0.7529,0.2941);
+                me["FUEL-Pump-Center-1-Open"].setColorFill(0.0509,0.7529,0.2941);
+                me["FUEL-Pump-Center-1-Closed"].setColorFill(0.0509,0.7529,0.2941);
+            }
         }
-         if (getprop("/systems/fuel/tank1pump2-fault") == 1) {
-            me["FUEL-Pump-Center-2-1"].setColorFill(0.7333,0.3803,0);
-            me["FUEL-Pump-Center-2-2"].setColorFill(0.7333,0.3803,0);
-            me["FUEL-Pump-Center-2-3"].setColorFill(0.7333,0.3803,0);
-            me["FUEL-Pump-Center-2-4"].setColorFill(0.7333,0.3803,0);
-            me["FUEL-Pump-Center-2-Open"].setColorFill(0.7333,0.3803,0);
-            me["FUEL-Pump-Center-2-Closed"].setColorFill(0.7333,0.3803,0);
-        } else {
-            me["FUEL-Pump-Center-2-1"].setColorFill(0.0509,0.7529,0.2941);
-            me["FUEL-Pump-Center-2-2"].setColorFill(0.0509,0.7529,0.2941);
-            me["FUEL-Pump-Center-2-3"].setColorFill(0.0509,0.7529,0.2941);
-            me["FUEL-Pump-Center-2-4"].setColorFill(0.0509,0.7529,0.2941);
-            me["FUEL-Pump-Center-2-Open"].setColorFill(0.0509,0.7529,0.2941);
-            me["FUEL-Pump-Center-2-Closed"].setColorFill(0.0509,0.7529,0.2941);
+        if (me.monitor_hash["pump-C2-fault"].test()) {
+            if (me.monitor_hash["pump-C2-fault"].value == 1) {
+                me["FUEL-Pump-Center-2-1"].setColorFill(0.7333,0.3803,0);
+                me["FUEL-Pump-Center-2-2"].setColorFill(0.7333,0.3803,0);
+                me["FUEL-Pump-Center-2-3"].setColorFill(0.7333,0.3803,0);
+                me["FUEL-Pump-Center-2-4"].setColorFill(0.7333,0.3803,0);
+                me["FUEL-Pump-Center-2-Open"].setColorFill(0.7333,0.3803,0);
+                me["FUEL-Pump-Center-2-Closed"].setColorFill(0.7333,0.3803,0);
+            } else {
+                me["FUEL-Pump-Center-2-1"].setColorFill(0.0509,0.7529,0.2941);
+                me["FUEL-Pump-Center-2-2"].setColorFill(0.0509,0.7529,0.2941);
+                me["FUEL-Pump-Center-2-3"].setColorFill(0.0509,0.7529,0.2941);
+                me["FUEL-Pump-Center-2-4"].setColorFill(0.0509,0.7529,0.2941);
+                me["FUEL-Pump-Center-2-Open"].setColorFill(0.0509,0.7529,0.2941);
+                me["FUEL-Pump-Center-2-Closed"].setColorFill(0.0509,0.7529,0.2941);
+            }
         }
 
         # Bottom section

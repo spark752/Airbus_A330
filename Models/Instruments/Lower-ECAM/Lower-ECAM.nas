@@ -29,12 +29,12 @@ setprop("/instrumentation/du/du4-test", 0);
 setprop("/instrumentation/du/du4-test-time", 0);
 setprop("/instrumentation/du/du4-test-amount", 0);
 
-# A330-main.xml puts this in the same namespace as Upper-ECAM.nas which
-# includes definitions for:
-# acconfig_weight_kgs
-
 # Base class for pages other than self test
 var canvas_lowerECAM_base = {
+    # Shared variables
+    weight_kgs_used: 1,
+
+    # Methods
     init: func(file) {
         var font_mapper = func(family, weight) {
             return "LiberationFonts/LiberationSans-Regular.ttf";
@@ -59,7 +59,7 @@ var canvas_lowerECAM_base = {
         me["SAT"].setText(sprintf("%2.0f", getprop("/environment/temperature-degc")));
         me["UTCh"].setText(sprintf("%02d", getprop("/sim/time/utc/hour")));
         me["UTCm"].setText(sprintf("%02d", getprop("/sim/time/utc/minute")));
-        if (acconfig_weight_kgs.getValue() == 1) {
+        if (me.weight_kgs_used) {
             # LB2KG is a FlightGear global constant
             me["GW-weight-unit"].setText("KG");
             me["GW"].setText(sprintf("%s", math.round(getprop("/FMGC/internal/gw") * LB2KG, 10)));
@@ -106,11 +106,43 @@ var canvas_lowerECAM_test = {
     },
 };
 
+# Simple class for monitoring properties that might not change often
+var lowerECAM_monitor = {
+    new: func(property) {
+        var m = {
+            parents: [me],
+            prop_name: property,
+            value: 0,
+            flag: 1, # Make sure the first test is true
+        };
+        return m;
+    },
+    update: func() {
+        # Compares and may set the value and flag but never clears the flag
+        var t = getprop(me.prop_name);
+        if (t != me.value) {
+            me.value = t;
+            me.flag = 1;
+        }
+    },
+    test: func() {
+        # Returns the flag value AND clears it. If you just need to check the
+        # flag use the flag member variable directly.
+        var flag_was = me.flag;
+        me.flag = 0;
+        return flag_was;
+    },
+};
+
 # Controller for updating display
 var lowerECAM_controller = {
+    # Shared variables
     display: nil,
     test_page: nil,
     page_hash: {},
+    previous_page_name: "",
+
+    # Methods
     init: func() {
         me.display = canvas.new({
             "name": "lowerECAM",
@@ -144,8 +176,8 @@ var lowerECAM_controller = {
         # Initialization for pages to hide never used labels etc.
         foreach(var key; keys(me.page_hash)) {
             me.page_hash[key].initPage();
-        }        
-        
+        }
+
         lowerECAM_update.start();
         if (getprop("/systems/acconfig/options/lecam-rate") > 1) {
             l_rateApply();
@@ -157,7 +189,12 @@ var lowerECAM_controller = {
             me.page_hash[key].page.hide();
         }
     },
+    debug_total: 0, # DEBUG ONLY
+    debug_count: 0, # DEBUG ONLY
     update: func() {
+        var timestamp = maketimestamp(); # DEBUG ONLY
+        canvas_lowerECAM_base.weight_kgs_used =
+            getprop("/systems/acconfig/options/weight-kgs");
         var elapsed_time = getprop("/sim/time/elapsed-sec");
         if (getprop("/systems/electrical/bus/ac2") >= 110) {
             if (getprop("/gear/gear[0]/wow") == 1) {
@@ -189,16 +226,15 @@ var lowerECAM_controller = {
             } else {
                 me.test_page.page.hide();
                 var page_name = getprop("/ECAM/Lower/page");
-                var previous_page = getprop("/ECAM/Lower/previous_page");
-                if (page_name != previous_page) {
-                    var lookup = me.page_hash[previous_page];
+                if (page_name != me.previous_page_name) {
+                    var lookup = me.page_hash[me.previous_page_name];
                     if (lookup != nil) {
                         lookup.page.hide();
                     } else {
                         # Default to status page for unsupported page names
                         me.page_hash["sts"].page.hide();
                     }
-                    setprop("/ECAM/Lower/previous_page", page_name);
+                    me.previous_page_name = page_name;
                 }
                 var lookup = me.page_hash[page_name];
                 if (lookup != nil) {
@@ -208,6 +244,17 @@ var lowerECAM_controller = {
                     # Default to status page for unsupported page names
                     me.page_hash["sts"].page.show();
                     me.page_hash["sts"].update();
+                }
+
+                # DEBUG ONLY: Does nothing useful if print is commented out.
+                # Otherwise spams console and log with timing info. Will be
+                # removed later.
+                me.debug_total = me.debug_total + timestamp.elapsedUSec();
+                me.debug_count = me.debug_count + 1;
+                if (me.debug_count > 100) {
+                    #print(me.debug_total / me.debug_count, "uSec ave");
+                    me.debug_count = 0;
+                    me.debug_total = 0;
                 }
             }
         } else {
@@ -227,6 +274,7 @@ setlistener("sim/signals/fdm-initialized", func {
     lowerECAM_controller.init();
 });
 
+# Default update rate is 50 ms but can be slowed down via the "DU Quality" dialog
 var lowerECAM_update = maketimer(0.05, func {
     lowerECAM_controller.update();
 });

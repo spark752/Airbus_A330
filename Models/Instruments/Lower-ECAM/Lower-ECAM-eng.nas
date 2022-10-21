@@ -49,7 +49,7 @@ var canvas_lowerECAM_eng = {
         me["OilPSI2-needle"].setRotation((getprop("/ECAM/Lower/Oil-PSI[1]") + 90) * D2R);
 
         # Fuel Used (Not yet supported but the label is there)
-        if (acconfig_weight_kgs.getValue() == 1) {
+        if (me.weight_kgs_used) {
             me["Fused-weight-unit"].setText("KG");
         } else {
             me["Fused-weight-unit"].setText("LBS");
