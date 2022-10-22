@@ -49,13 +49,13 @@
      inkscape:window-height="1175"
      id="namedview371"
      showgrid="true"
-     inkscape:zoom="3.8466609"
-     inkscape:cx="1009.057"
-     inkscape:cy="183.92575"
+     inkscape:zoom="0.96166523"
+     inkscape:cx="941.59586"
+     inkscape:cy="188.73512"
      inkscape:window-x="1050"
      inkscape:window-y="164"
      inkscape:window-maximized="1"
-     inkscape:current-layer="FUEL-ENG-Master-2"
+     inkscape:current-layer="svg2"
      inkscape:pagecheckerboard="0"
      inkscape:document-units="pt">
     <inkscape:grid
@@ -151,22 +151,6 @@
        height="5.1203089"
        width="53.195583"
        id="FUEL-XFEED-On"
-       style="fill:#0dc04b;fill-opacity:1;stroke:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       inkscape:label="#rect5105-2-5-3" />
-    <rect
-       y="84.077972"
-       x="574.87067"
-       height="5.1203089"
-       width="53.195583"
-       id="FUEL-ENG-Master-1-Off"
-       style="fill:#0dc04b;fill-opacity:1;stroke:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       inkscape:label="#rect5105-2-5-3" />
-    <rect
-       y="84.078285"
-       x="1061.4819"
-       height="5.1203089"
-       width="53.195583"
-       id="FUEL-ENG-Master-2-Off"
        style="fill:#0dc04b;fill-opacity:1;stroke:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        inkscape:label="#rect5105-2-5-3" />
   </g>
@@ -343,7 +327,7 @@
      y="305.76767"
      transform="matrix(-0.99446713,-0.10504821,-0.10504821,0.99446713,0,0)" />
   <g
-     id="FUEL-ENG-Master-1"
+     id="FUEL-ENG-1-On"
      inkscape:label="#g3445"
      transform="rotate(-90,543.42748,450.68548)">
     <path
@@ -365,20 +349,6 @@
      id="FUEL-ENG-Master-2"
      inkscape:label="#g3445"
      transform="rotate(-90,787.07746,207.73107)">
-    <path
-       sodipodi:nodetypes="zzzzz"
-       inkscape:connector-curvature="0"
-       id="path5107-1-44-6-0"
-       d="m 873.15389,172.15317 c 0,15.58192 -12.63164,28.21356 -28.21356,28.21356 -15.58192,0 -28.21356,-12.63164 -28.21356,-28.21356 0,-15.58192 12.63164,-28.21356 28.21356,-28.21356 15.58192,0 28.21356,12.63164 28.21356,28.21356 z"
-       style="fill:none;fill-opacity:1;stroke:#0dc04b;stroke-width:4.8;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
-    <rect
-       y="169.28328"
-       x="817.61298"
-       height="5.1203089"
-       width="53.195583"
-       id="FUEL-ENG-Master-2-On"
-       style="fill:#0dc04b;fill-opacity:1;stroke:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       inkscape:label="#rect5105-2-5-3-4-3" />
     <rect
        y="-74.466698"
        x="732.30853"
@@ -391,28 +361,28 @@
   <text
      xml:space="preserve"
      style="font-style:normal;font-weight:normal;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#cecdce;fill-opacity:1;stroke:none;stroke-width:1.12172"
-     x="260.50327"
-     y="57.44717"
+     x="263.17252"
+     y="57.353615"
      id="FUEL-ENG-1-label"
      transform="scale(0.95537766,1.0467065)"
      inkscape:label="#text5073"><tspan
        sodipodi:role="line"
        id="tspan5071"
-       x="260.50327"
-       y="57.44717"
+       x="263.17252"
+       y="57.353615"
        style="font-size:44.8686px;line-height:1.25;fill:#cecdce;fill-opacity:1;stroke-width:1.12172">1</tspan></text>
   <text
      xml:space="preserve"
      style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#cecdce;fill-opacity:1;stroke:none;stroke-width:1.12172"
-     x="768.26727"
-     y="57.18037"
+     x="773.60693"
+     y="57.945442"
      id="FUEL-ENG-2-label"
      transform="scale(0.95537765,1.0467065)"
      inkscape:label="#text5073-0"><tspan
        sodipodi:role="line"
        id="tspan5093"
-       x="768.26727"
-       y="57.18037"
+       x="773.60693"
+       y="57.945442"
        style="font-size:44.869px;line-height:1.25">2</tspan></text>
   <text
      xml:space="preserve"
@@ -1639,4 +1609,96 @@
      x="243.83603"
      y="841.46234"
      transform="matrix(-0.17364818,0.98480775,0.98480775,0.17364818,0,0)" />
+  <rect
+     style="fill:#0dc04b;fill-opacity:1;stroke:none;stroke-width:1.24083;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     id="FUEL-Pipe-Center1"
+     width="5.3955846"
+     height="33.749996"
+     x="459.6044"
+     y="427.5" />
+  <rect
+     style="fill:#0dc04b;fill-opacity:1;stroke:none;stroke-width:1.24083;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     id="FUEL-Pipe-Center2"
+     width="5.3955846"
+     height="33.749996"
+     x="549.60443"
+     y="427.5" />
+  <g
+     id="FUEL-Pipes-Center">
+    <path
+       sodipodi:nodetypes="cccccsc"
+       inkscape:connector-curvature="0"
+       id="arrow001"
+       d="m 406.5,458.65214 8.42442,-5.23569 8.82558,-5.75925 v 12.04208 10.68676 c 0,0 -0.90579,-0.47723 -10.53471,-7.12689 -5.91297,-4.08344 -6.71529,-4.60701 -6.71529,-4.60701 z"
+       style="fill:none;stroke:#0dc04b;stroke-width:1.69569;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.8;stroke-dasharray:none;stroke-opacity:1" />
+    <path
+       sodipodi:nodetypes="cccccsc"
+       inkscape:connector-curvature="0"
+       id="arrow002"
+       d="M 611.25,459.29011 602.82558,454.05442 594,448.29517 v 12.04208 10.68676 c 0,0 0.90579,-0.47723 10.53471,-7.12689 5.91297,-4.08344 6.71529,-4.60701 6.71529,-4.60701 z"
+       style="fill:none;stroke:#0dc04b;stroke-width:1.69569;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.8;stroke-dasharray:none;stroke-opacity:1" />
+    <rect
+       style="fill:#0dc04b;fill-opacity:1;stroke:none;stroke-width:2.79006;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="pipe012"
+       width="5.3955846"
+       height="170.63713"
+       x="456.75"
+       y="-594.75"
+       transform="rotate(90)" />
+  </g>
+  <g
+     id="FUEL-ENG-1-Off"
+     inkscape:label="#g3445"
+     transform="translate(-579.05853,-21.533279)">
+    <path
+       sodipodi:nodetypes="zzzzz"
+       inkscape:connector-curvature="0"
+       id="path5107-1-44-6-1"
+       d="m 871.89551,171.81517 c 0,15.58192 -12.63164,28.21356 -28.21356,28.21356 -15.58192,0 -28.21356,-12.63164 -28.21356,-28.21356 0,-15.58192 12.63164,-28.21356 28.21356,-28.21356 15.58192,0 28.21356,12.63164 28.21356,28.21356 z"
+       style="fill:none;fill-opacity:1;stroke:#bb6100;stroke-width:4.8;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    <rect
+       y="169.28328"
+       x="817.61298"
+       height="5.1203089"
+       width="53.195583"
+       id="FUEL-ENG-Master-1-Off"
+       style="fill:#bb6100;fill-opacity:1;stroke:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       inkscape:label="#rect5105-2-5-3-4" />
+  </g>
+  <g
+     id="FUEL-ENG-2-On">
+    <path
+       sodipodi:nodetypes="zzzzz"
+       inkscape:connector-curvature="0"
+       id="path5107-1-44-6-0"
+       d="m 873.15389,172.15317 c 0,15.58192 -12.63164,28.21356 -28.21356,28.21356 -15.58192,0 -28.21356,-12.63164 -28.21356,-28.21356 0,-15.58192 12.63164,-28.21356 28.21356,-28.21356 15.58192,0 28.21356,12.63164 28.21356,28.21356 z"
+       style="fill:none;fill-opacity:1;stroke:#0dc04b;stroke-width:4.8;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       transform="rotate(-90,787.07748,207.73109)" />
+    <rect
+       y="169.28328"
+       x="817.61298"
+       height="5.1203089"
+       width="53.194962"
+       id="FUEL-ENG-Master-2-On"
+       style="fill:#0dc04b;fill-opacity:1;stroke:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       inkscape:label="#rect5105-2-5-3-4-3"
+       transform="rotate(-90,787.07748,207.73109)" />
+  </g>
+  <g
+     id="FUEL-ENG-2-Off">
+    <rect
+       y="147.75023"
+       x="724.96088"
+       height="5.1203089"
+       width="53.194962"
+       id="FUEL-ENG-Master-2-Off"
+       style="fill:#bb6100;fill-opacity:1;stroke:none;stroke-width:0.999989;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       inkscape:label="#rect5105-2-5-3" />
+    <path
+       sodipodi:nodetypes="zzzzz"
+       inkscape:connector-curvature="0"
+       id="path5107-1-44-6-0-7"
+       d="m 751.44128,121.65354 c 15.58192,0 28.21356,12.63164 28.21356,28.21356 0,15.58192 -12.63164,28.21356 -28.21356,28.21356 -15.58192,0 -28.21356,-12.63164 -28.21356,-28.21356 0,-15.58192 12.63164,-28.21356 28.21356,-28.21356 z"
+       style="fill:none;fill-opacity:1;stroke:#bb6100;stroke-width:4.8;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+  </g>
 </svg>

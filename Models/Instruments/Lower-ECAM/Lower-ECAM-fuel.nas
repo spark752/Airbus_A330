@@ -20,8 +20,8 @@ var canvas_lowerECAM_fuel = {
             "FUEL-Left-Inner-temp","FUEL-Right-Inner-temp",
             "FUEL-XFEED-Left","FUEL-XFEED-Right",
             "FUEL-XFEED-On","FUEL-XFEED-Off",
-            "FUEL-ENG-Master-1-Off","FUEL-ENG-Master-1-On",
-            "FUEL-ENG-Master-2-Off","FUEL-ENG-Master-2-On",
+            "FUEL-ENG-1-On","FUEL-ENG-1-Off",
+            "FUEL-ENG-2-On","FUEL-ENG-2-Off",
             "FUEL-Pump-Left-1-1","FUEL-Pump-Left-1-2",
             "FUEL-Pump-Left-1-3","FUEL-Pump-Left-1-4",
             "FUEL-Pump-Left-2-1","FUEL-Pump-Left-2-2",
@@ -43,6 +43,8 @@ var canvas_lowerECAM_fuel = {
             "FUEL-Pump-Right-2-Open","FUEL-Pump-Right-2-Closed",
             "FUEL-Pump-Right-3-Open","FUEL-Pump-Right-3-Closed",
             "FUEL-APU-label","FUEL-APU-arrow","FUEL-APU-line",
+            "FUEL-Pipes-Center","FUEL-Pipe-Center1","FUEL-Pipe-Center2",
+            "FUEL-ENG-1-label","FUEL-ENG-2-label",
             "GLoad",
         ];
     },
@@ -81,7 +83,11 @@ var canvas_lowerECAM_fuel = {
             lowerECAM_monitor.new("/controls/engines/engine[0]/cutoff");
         me.monitor_hash["engine-2-cutoff"] =
             lowerECAM_monitor.new("/controls/engines/engine[1]/cutoff");
-        },
+        me.monitor_hash["engine-1-running"] =
+            lowerECAM_monitor.new("/engines/engine[0]/running");
+        me.monitor_hash["engine-2-running"] =
+            lowerECAM_monitor.new("/engines/engine[1]/running");
+    },
     update: func() {
         # Monitor things that seldom change
         foreach(var key; keys(me.monitor_hash)) {
@@ -144,20 +150,34 @@ var canvas_lowerECAM_fuel = {
         }
         if (me.monitor_hash["engine-1-cutoff"].test()) {
             if (me.monitor_hash["engine-1-cutoff"].value) {
-                me["FUEL-ENG-Master-1-Off"].show();
-                me["FUEL-ENG-Master-1-On"].hide();
+                me["FUEL-ENG-1-Off"].show();
+                me["FUEL-ENG-1-On"].hide();
             } else {
-                me["FUEL-ENG-Master-1-Off"].hide();
-                me["FUEL-ENG-Master-1-On"].show();
+                me["FUEL-ENG-1-Off"].hide();
+                me["FUEL-ENG-1-On"].show();
             }
         }
         if (me.monitor_hash["engine-2-cutoff"].test()) {
             if (me.monitor_hash["engine-2-cutoff"].value) {
-                me["FUEL-ENG-Master-2-Off"].show();
-                me["FUEL-ENG-Master-2-On"].hide();
+                me["FUEL-ENG-2-Off"].show();
+                me["FUEL-ENG-2-On"].hide();
             } else {
-                me["FUEL-ENG-Master-2-Off"].hide();
-                me["FUEL-ENG-Master-2-On"].show();
+                me["FUEL-ENG-2-Off"].hide();
+                me["FUEL-ENG-2-On"].show();
+            }
+        }
+        if (me.monitor_hash["engine-1-running"].test()) {
+            if (me.monitor_hash["engine-1-running"].value) {
+                me["FUEL-ENG-1-label"].setColor(0.8078,0.8039,0.8078);
+            } else {
+                me["FUEL-ENG-1-label"].setColor(0.7333,0.3803,0);
+            }
+        }
+        if (me.monitor_hash["engine-2-running"].test()) {
+            if (me.monitor_hash["engine-2-running"].value) {
+                me["FUEL-ENG-2-label"].setColor(0.8078,0.8039,0.8078);
+            } else {
+                me["FUEL-ENG-2-label"].setColor(0.7333,0.3803,0);
             }
         }
 
@@ -295,19 +315,36 @@ var canvas_lowerECAM_fuel = {
         # Note that the center tank does not seem to be currently implemented
         # correctly by the model.
         var center_fuel = getprop("/consumables/fuel/tank[1]/level-kg");
-        if ((getprop("/controls/fuel/tank1pump1") == 1) and
-                center_fuel > 0) {
-            me["FUEL-Pump-Center-1-Open"].show();
-            me["FUEL-Pump-Center-1-Closed"].hide();
+        var center_pump1_switch = getprop("/controls/fuel/tank1pump1");
+        var center_pump2_switch = getprop("/controls/fuel/tank1pump2");
+        var center_used = (center_fuel > 1) and (center_pump1_switch or
+            center_pump2_switch);
+        if (center_used) {
+            me["FUEL-Pipes-Center"].show();
+            if (center_pump1_switch) {
+                me["FUEL-Pump-Center-1-Open"].show();
+                me["FUEL-Pump-Center-1-Closed"].hide();
+                me["FUEL-Pipe-Center1"].show();
+            } else {
+                me["FUEL-Pump-Center-1-Open"].hide();
+                me["FUEL-Pump-Center-1-Closed"].show();
+                me["FUEL-Pipe-Center1"].hide();
+            }
+            if (center_pump2_switch) {
+                me["FUEL-Pump-Center-2-Open"].show();
+                me["FUEL-Pump-Center-2-Closed"].hide();
+                me["FUEL-Pipe-Center2"].show();
+            } else {
+                me["FUEL-Pump-Center-2-Open"].hide();
+                me["FUEL-Pump-Center-2-Closed"].show();
+                me["FUEL-Pipe-Center2"].hide();
+            }
         } else {
+            me["FUEL-Pipes-Center"].hide();
+            me["FUEL-Pipe-Center1"].hide();
+            me["FUEL-Pipe-Center2"].hide();
             me["FUEL-Pump-Center-1-Open"].hide();
             me["FUEL-Pump-Center-1-Closed"].show();
-        }
-        if ((getprop("/controls/fuel/tank1pump2") == 1) and
-                center_fuel > 0) {
-            me["FUEL-Pump-Center-2-Open"].show();
-            me["FUEL-Pump-Center-2-Closed"].hide();
-        } else {
             me["FUEL-Pump-Center-2-Open"].hide();
             me["FUEL-Pump-Center-2-Closed"].show();
         }
