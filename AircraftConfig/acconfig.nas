@@ -184,7 +184,7 @@ setlistener("/sim/signals/fdm-initialized", func {
 	if (getprop("/systems/acconfig/out-of-date") == 1) {
 		update_dlg.open();
 		print("System: The Airbus_A330 is out of date!");
-	} 
+	}
 	mismatch_chk();
 	readSettings();
 	if (getprop("/systems/acconfig/out-of-date") != 1 and getprop("/systems/acconfig/options/revision") < current_revision and getprop("/systems/acconfig/mismatch-code") == "0x000") {
@@ -200,11 +200,11 @@ setlistener("/sim/signals/fdm-initialized", func {
 	}
 	setprop("/systems/acconfig/options/revision", current_revision);
 	writeSettings();
-	
+
 	if (getprop("/options/system/fo-view") == 1) {
 		view.setViewByIndex(100);
 	}
-	
+
 	spinning.stop();
 });
 
@@ -240,7 +240,7 @@ var renderingSettings = {
 var readSettings = func {
 	io.read_properties(getprop("/sim/fg-home") ~ "/Export/Airbus_A330-config.xml", "/systems/acconfig/options");
 	setprop("/options/system/keyboard-mode", getprop("/systems/acconfig/options/keyboard-mode"));
-	setprop("/options/system/weight-kgs", getprop("/systems/acconfig/options/weight-kgs"));    
+	setprop("/options/system/weight-kgs", getprop("/systems/acconfig/options/weight-kgs"));
 	setprop("/controls/adirs/skip", getprop("/systems/acconfig/options/adirs-skip"));
 	setprop("/sim/model/autopush/route/show", getprop("/systems/acconfig/options/autopush/show-route"));
 	setprop("/sim/model/autopush/route/show-wingtip", getprop("/systems/acconfig/options/autopush/show-wingtip"));
@@ -249,7 +249,7 @@ var readSettings = func {
 
 var writeSettings = func {
 	setprop("/systems/acconfig/options/keyboard-mode", getprop("/options/system/keyboard-mode"));
-	setprop("/systems/acconfig/options/weight-kgs", getprop("/options/system/weight-kgs"));    
+	setprop("/systems/acconfig/options/weight-kgs", getprop("/options/system/weight-kgs"));
 	setprop("/systems/acconfig/options/adirs-skip", getprop("/controls/adirs/skip"));
 	setprop("/systems/acconfig/options/autopush/show-route", getprop("/sim/model/autopush/route/show"));
 	setprop("/systems/acconfig/options/autopush/show-wingtip", getprop("/sim/model/autopush/route/show-wingtip"));
@@ -348,7 +348,7 @@ var beforestart = func {
 		failReset();
 		setprop("/controls/APU/master", 0);
 		setprop("/controls/APU/start", 0);
-		
+
 		# Now the Startup!
 		setprop("/controls/electrical/switches/battery1", 1);
 		setprop("/controls/electrical/switches/battery2", 1);
@@ -397,6 +397,9 @@ var beforestart_b = func {
 	setprop("/controls/radio/rmp[2]/on", 1);
 	setprop("/systems/fadec/power-avail", 1);
 	setprop("/systems/fadec/powered-time", -310);
+	setprop("/controls/lighting/main-panel-knb", 0.7);
+	setprop("/controls/lighting/fcu-panel-knb", 0.7);
+	setprop("/controls/lighting/overhead-panel-knb", 0.7);
 	settimer(func {
 		setprop("/controls/gear/brake-left", 0);
 		setprop("/controls/gear/brake-right", 0);
@@ -434,7 +437,7 @@ var taxi = func {
 		failReset();
 		setprop("/controls/APU/master", 0);
 		setprop("/controls/APU/start", 0);
-		
+
 		# Now the Startup!
 		setprop("/controls/electrical/switches/battery1", 1);
 		setprop("/controls/electrical/switches/battery2", 1);
@@ -484,6 +487,9 @@ var taxi_b = func {
 	atc.transponderPanel.modeSwitch(3);
 	setprop("/systems/fadec/power-avail", 1);
 	setprop("/systems/fadec/powered-time", -310);
+	setprop("/controls/lighting/main-panel-knb", 0.7);
+	setprop("/controls/lighting/fcu-panel-knb", 0.7);
+	setprop("/controls/lighting/overhead-panel-knb", 0.7);    
 	setprop("/controls/lighting/turnoff-light-switch", 1);
 	setprop("/controls/lighting/taxi-light-switch", 0.5);
 	setprop("/instrumentation/altimeter[0]/setting-inhg", getprop("/environment/pressure-sea-level-inhg"));
