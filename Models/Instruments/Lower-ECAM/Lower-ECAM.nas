@@ -106,8 +106,34 @@ var canvas_lowerECAM_test = {
     },
 };
 
-# Simple class for monitoring properties that might not change often
-var lowerECAM_monitor = {
+# Simple class for monitoring generic items for changes
+var lowerECAM_gen_monitor = {
+    new: func() {
+        var m = {
+            parents: [me],
+            value: 0,
+            flag: 1, # Make sure the first test is true
+        };
+        return m;
+    },
+    update: func(new_value) {
+        # Compares and may set the value and flag but never clears the flag
+        if (new_value != me.value) {
+            me.value = new_value;
+            me.flag = 1;
+        }
+    },
+    test: func() {
+        # Returns the flag value AND clears it. If you just need to check the
+        # flag use the flag member variable directly.
+        var flag_was = me.flag;
+        me.flag = 0;
+        return flag_was;
+    },
+};
+
+# Simple class for monitoring properties for changes
+var lowerECAM_prop_monitor = {
     new: func(property) {
         var m = {
             parents: [me],

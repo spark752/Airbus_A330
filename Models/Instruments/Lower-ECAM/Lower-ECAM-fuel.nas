@@ -66,27 +66,27 @@ var canvas_lowerECAM_fuel = {
 
         # Monitor things that seldom change
         me.monitor_hash["pump-L1-fault"] =
-            lowerECAM_monitor.new("/systems/fuel/tank0pump1-fault");
+            lowerECAM_prop_monitor.new("/systems/fuel/tank0pump1-fault");
         me.monitor_hash["pump-L2-fault"] =
-            lowerECAM_monitor.new("/systems/fuel/tank0pump2-fault");
+            lowerECAM_prop_monitor.new("/systems/fuel/tank0pump2-fault");
         me.monitor_hash["pump-C1-fault"] =
-            lowerECAM_monitor.new("/systems/fuel/tank1pump1-fault");
+            lowerECAM_prop_monitor.new("/systems/fuel/tank1pump1-fault");
         me.monitor_hash["pump-C2-fault"] =
-            lowerECAM_monitor.new("/systems/fuel/tank1pump2-fault");
+            lowerECAM_prop_monitor.new("/systems/fuel/tank1pump2-fault");
         me.monitor_hash["pump-R1-fault"] =
-            lowerECAM_monitor.new("/systems/fuel/tank2pump1-fault");
+            lowerECAM_prop_monitor.new("/systems/fuel/tank2pump1-fault");
         me.monitor_hash["pump-R2-fault"] =
-            lowerECAM_monitor.new("/systems/fuel/tank2pump2-fault");
+            lowerECAM_prop_monitor.new("/systems/fuel/tank2pump2-fault");
         me.monitor_hash["x-feed"] =
-            lowerECAM_monitor.new("/systems/fuel/x-feed");
+            lowerECAM_prop_monitor.new("/systems/fuel/x-feed");
         me.monitor_hash["engine-1-cutoff"] =
-            lowerECAM_monitor.new("/controls/engines/engine[0]/cutoff");
+            lowerECAM_prop_monitor.new("/controls/engines/engine[0]/cutoff");
         me.monitor_hash["engine-2-cutoff"] =
-            lowerECAM_monitor.new("/controls/engines/engine[1]/cutoff");
+            lowerECAM_prop_monitor.new("/controls/engines/engine[1]/cutoff");
         me.monitor_hash["engine-1-running"] =
-            lowerECAM_monitor.new("/engines/engine[0]/running");
+            lowerECAM_prop_monitor.new("/engines/engine[0]/running");
         me.monitor_hash["engine-2-running"] =
-            lowerECAM_monitor.new("/engines/engine[1]/running");
+            lowerECAM_prop_monitor.new("/engines/engine[1]/running");
     },
     update: func() {
         # Monitor things that seldom change
