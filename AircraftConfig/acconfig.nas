@@ -489,7 +489,7 @@ var taxi_b = func {
 	setprop("/systems/fadec/powered-time", -310);
 	setprop("/controls/lighting/main-panel-knb", 0.7);
 	setprop("/controls/lighting/fcu-panel-knb", 0.7);
-	setprop("/controls/lighting/overhead-panel-knb", 0.7);    
+	setprop("/controls/lighting/overhead-panel-knb", 0.7);
 	setprop("/controls/lighting/turnoff-light-switch", 1);
 	setprop("/controls/lighting/taxi-light-switch", 0.5);
 	setprop("/instrumentation/altimeter[0]/setting-inhg", getprop("/environment/pressure-sea-level-inhg"));
@@ -543,4 +543,26 @@ var takeoff = func {
 			}
 		});
 	}
+}
+
+# Rebalance fuel to an A330 strategy (wing tanks full before center used)
+var rebalance_fuel = func() {
+	# Do not count fuel in engine pipes
+	var fuel_on_board = getprop("/consumables/fuel/total-fuel-gal_us") -
+		getprop("/consumables/fuel/tank[3]/level-gal_us") -
+		getprop("/consumables/fuel/tank[4]/level-gal_us");
+	var left_cap = getprop("/consumables/fuel/tank[0]/capacity-gal_us");
+	var right_cap = getprop("/consumables/fuel/tank[2]/capacity-gal_us");
+	var max_in_wings = left_cap + right_cap;
+	if (fuel_on_board > max_in_wings) {
+		setprop("/consumables/fuel/tank[0]/level-gal_us", left_cap);
+		setprop("/consumables/fuel/tank[1]/level-gal_us",
+			fuel_on_board - max_in_wings);
+		setprop("/consumables/fuel/tank[2]/level-gal_us", right_cap);
+	} else {
+		setprop("/consumables/fuel/tank[0]/level-gal_us", fuel_on_board * 0.5);
+		setprop("/consumables/fuel/tank[1]/level-gal_us", 0);
+		setprop("/consumables/fuel/tank[2]/level-gal_us", fuel_on_board * 0.5);
+	}
+	screen.log.write("Fuel distributed to rebalance A330 fuel tanks", 1, 1, 1);
 }

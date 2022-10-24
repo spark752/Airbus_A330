@@ -88,6 +88,17 @@
 				</button>
 				<button>
 					<halign>center</halign>
+					<legend>Rebalance Fuel</legend>
+					<pref-width>140</pref-width>
+					<binding>
+						<command>nasal</command>
+						<script>
+						acconfig.rebalance_fuel();
+						</script>
+					</binding>
+				</button>
+				<button>
+					<halign>center</halign>
 					<legend>About Aircraft</legend>
 					<pref-width>140</pref-width>
 					<binding>
