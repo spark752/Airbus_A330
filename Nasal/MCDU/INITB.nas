@@ -67,3 +67,9 @@ var initInputB = func(key, i) {
 		}
 	}
 }
+
+var initArrowB = func(key, i) {
+	if (key == "left" or key == "right") {
+		setprop("/MCDU[" ~ i ~ "]/page", "INITA");
+	}
+}

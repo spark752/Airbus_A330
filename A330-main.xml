@@ -1644,6 +1644,13 @@
 			<file>Aircraft/Airbus_A330/Models/Instruments/IESI/IESI.nas</file>
 		</canvas_iesi>
 		<canvas_mcdu>
+			<file>Aircraft/Airbus_A330/Models/Instruments/MCDU/menu.nas</file>
+			<file>Aircraft/Airbus_A330/Models/Instruments/MCDU/init.nas</file>
+			<file>Aircraft/Airbus_A330/Models/Instruments/MCDU/data.nas</file>
+			<file>Aircraft/Airbus_A330/Models/Instruments/MCDU/perf.nas</file>
+			<file>Aircraft/Airbus_A330/Models/Instruments/MCDU/fuelpred.nas</file>
+			<file>Aircraft/Airbus_A330/Models/Instruments/MCDU/radnav.nas</file>
+			<file>Aircraft/Airbus_A330/Models/Instruments/MCDU/MCDU-funcs.nas</file>
 			<file>Aircraft/Airbus_A330/Models/Instruments/MCDU/MCDU.nas</file>
 		</canvas_mcdu>
 		<icing>

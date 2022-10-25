@@ -83,6 +83,7 @@ var perfTOInput = func(key, i) {
 			}
 		}
 	} else if (key == "L5") {
+		# Thrust reduction and acceleration altitude are both strings
 		if (scratchpad == "CLR") {
 			setprop("/systems/thrust/clbreduc-ft", "1500");
 			setprop("/FMGC/internal/reduc-agl-ft", "3000");
@@ -98,6 +99,18 @@ var perfTOInput = func(key, i) {
 				if ((thrred >= 3 and thrred <= 5) and (acc >= 3 and acc <= 5)) {
 					setprop("/systems/thrust/clbreduc-ft", thracc[0]);
 					setprop("/FMGC/internal/reduc-agl-ft", thracc[1]);
+					setprop("/MCDUC/thracc-set", 1);
+					setprop("/MCDU[" ~ i ~ "]/scratchpad", "");
+				} else {
+					notAllowed(i);
+				}
+			} else if (tfs < 6) {
+				# Entering one value should set both the same. Make sure the
+				# entry is a valid number even though we store as a string.
+				var v = num(scratchpad);
+				if (v != nil and v > 399) {
+					setprop("/systems/thrust/clbreduc-ft", scratchpad);
+					setprop("/FMGC/internal/reduc-agl-ft", scratchpad);
 					setprop("/MCDUC/thracc-set", 1);
 					setprop("/MCDU[" ~ i ~ "]/scratchpad", "");
 				} else {
@@ -169,6 +182,6 @@ var perfTOInput = func(key, i) {
 			}
 		}
 	} else if (key == "R6") {
-		setprop("/MCDU[" ~ i ~ "]/page", "CLB");
-	} 
+		setprop("/MCDU[" ~ i ~ "]/page", "PERFCLB");
+	}
 }

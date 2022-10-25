@@ -21,28 +21,7 @@ var initInputA = func(key, i) {
 			}
 		}
 	} else if (key == "L5") {
-		if (scratchpad == "CLR") {
-			setprop("/FMGC/internal/cost-index", 0);
-			setprop("/FMGC/internal/cost-index-set", 0);
-			setprop("/MCDU[" ~ i ~ "]/scratchpad-msg", 0);
-			setprop("/MCDU[" ~ i ~ "]/scratchpad", "");
-		} else {
-			var ci = int(scratchpad);
-			var cis = size(scratchpad);
-			if (cis >= 1 and cis <= 3) {
-				if (ci == nil) {
-					notAllowed(i);
-				} else if (ci >= 0 and ci <= 999) {
-					setprop("/FMGC/internal/cost-index", ci);
-					setprop("/FMGC/internal/cost-index-set", 1);
-					setprop("/MCDU[" ~ i ~ "]/scratchpad", "");
-				} else {
-					notAllowed(i);
-				}
-			} else {
-				notAllowed(i);
-			}
-		}
+		setCostIndex(i);
 	} else if (key == "L6") {
 		if (scratchpad == "CLR") {
 			setprop("/FMGC/internal/cruise-ft", 10000);
@@ -114,6 +93,16 @@ var initInputA = func(key, i) {
 			} else {
 				notAllowed(i);
 			}
+		}
+	}
+}
+
+var initArrowA = func(key, i) {
+	if (key == "left" or key == "right") {
+		# Can only move to INITB if engines aren't running
+		if (getprop("/engines/engine[0]/state") != 3 and
+				getprop("/engines/engine[1]/state") != 3) {
+			setprop("/MCDU[" ~ i ~ "]/page", "INITB");
 		}
 	}
 }

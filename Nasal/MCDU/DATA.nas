@@ -9,8 +9,26 @@ var dataInput = func(key, i) {
 	if (key == "L2") {
 		setprop("/MCDU[" ~ i ~ "]/page", "IRSMON");
 	}
+	if (key == "L4") {
+		setprop("/MCDU[" ~ i ~ "]/page", "STATUS");
+	}
 	if (key == "R5") {
 		setprop("/MCDU[" ~ i ~ "]/page", "PRINTFUNC");
+	}
+	if (key == "R6") {
+		aocDisabled(i);
+	}
+}
+
+var dataArrow = func(key, i) {
+	if (key == "left" or key == "right") {
+		setprop("/MCDU[" ~ i ~ "]/page", "DATA2");
+	}
+}
+
+var dataArrow2 = func(key, i) {
+	if (key == "left" or key == "right") {
+		setprop("/MCDU[" ~ i ~ "]/page", "DATA");    
 	}
 }
 
@@ -35,6 +53,15 @@ var printInput = func(key, i) {
 	}
 	if (key == "R3") { 
 		setprop("/FMGC/print/mcdu/page1/R3req", 1);
+	}
+	if (key == "R6") {
+		aocDisabled(i);
+	}    
+}
+
+var printArrow = func(key, i) {
+	if (key == "left" or key == "right") {
+		setprop("/MCDU[" ~ i ~ "]/page", "PRINTFUNC2");
 	}
 }
 
@@ -65,5 +92,14 @@ var printInput2 = func(key, i) {
 	}
 	if (key == "R4") { 
 		setprop("/FMGC/print/mcdu/page2/R4req", 1);
+	}
+	if (key == "R6") {
+		aocDisabled(i);
+	}    
+}
+
+var printArrow2 = func(key, i) {
+	if (key == "left" or key == "right") {
+		setprop("/MCDU[" ~ i ~ "]/page", "PRINTFUNC");
 	}
 }
