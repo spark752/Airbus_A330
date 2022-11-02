@@ -3,8 +3,6 @@
 # Functions will be called within the namespace of canvas_MCDU_base
 var radnavPage = func(page_switch) {
     # Legacy variable names
-    var default = me.default_font;
-    var symbol = me.symbol_font;
     var normal = me.normal_font_size;
     var small = me.small_font_size;
 
@@ -15,47 +13,12 @@ var radnavPage = func(page_switch) {
         me["ArrowLeft"].hide();
         me["ArrowRight"].hide();
 
-        me["Simple_L1"].show();
-        me["Simple_L2"].show();
-        me["Simple_L3"].show();
-        me["Simple_L4"].show();
-        me["Simple_L5"].show();
-        me["Simple_L6"].hide();
-        me["Simple_L1S"].show();
-        me["Simple_L2S"].show();
-        me["Simple_L3S"].show();
-        me["Simple_L4S"].show();
-        me["Simple_L5S"].show();
-        me["Simple_L6S"].hide();
-        me["Simple_L1_Arrow"].hide();
-        me["Simple_L2_Arrow"].hide();
-        me["Simple_L3_Arrow"].hide();
-        me["Simple_L4_Arrow"].hide();
-        me["Simple_L5_Arrow"].hide();
-        me["Simple_L6_Arrow"].hide();
-        me["Simple_R1"].show();
-        me["Simple_R2"].show();
-        me["Simple_R3"].show();
-        me["Simple_R4"].show();
-        me["Simple_R5"].show();
-        me["Simple_R6"].hide();
-        me["Simple_R1S"].show();
-        me["Simple_R2S"].show();
-        me["Simple_R3S"].show();
-        me["Simple_R4S"].show();
-        me["Simple_R5S"].show();
-        me["Simple_R6S"].hide();
-        me["Simple_R1_Arrow"].hide();
-        me["Simple_R2_Arrow"].hide();
-        me["Simple_R3_Arrow"].hide();
-        me["Simple_R4_Arrow"].hide();
-        me["Simple_R5_Arrow"].hide();
-        me["Simple_R6_Arrow"].hide();
-
-        me.fontLeft(default, default, default, default, 0, default);
-        me.fontLeftS(default, default, default, default, default, default);
-        me.fontRight(default, default, symbol, symbol, 0, default);
-        me.fontRightS(default, default, default, default, default, default);
+        showLeft(me, 1, 1, 1, 1, 1, -1);
+        showLeftS(me, 1, 1, 1, 1, 1, -1);
+        showRight(me, 1, 1, 1, 1, 1, -1);
+        showRightS(me, 1, 1, 1, 1, 1, -1);
+        showLeftArrow(me, -1, -1, -1, -1, -1, -1);
+        showRightArrow(me, -1, -1, -1, -1, -1, -1);
 
         me.fontSizeLeft(0, 0, 0, 0, 0, normal);
         me.fontSizeRight(0, 0, small, small, 0, normal);
@@ -123,11 +86,9 @@ var radnavPage = func(page_switch) {
     if (n != me.radnav_change[4] or page_switch) {
         me.radnav_change[4] = n;
         if (n == 1) {
-            me["Simple_L5"].setFont(default);
             me["Simple_L5"].setFontSize(normal);
             me["Simple_L5"].setText(node.adf1.getValue());
         } else {
-            me["Simple_L5"].setFont(symbol);
             me["Simple_L5"].setFontSize(small);
             me["Simple_L5"].setText("[    ]/[     . ]");
         }
@@ -154,11 +115,9 @@ var radnavPage = func(page_switch) {
     if (n != me.radnav_change[7] or page_switch) {
         me.radnav_change[7] = n;
         if (n == 1) {
-            me["Simple_R5"].setFont(default);
             me["Simple_R5"].setFontSize(normal);
             me["Simple_R5"].setText(node.adf2.getValue());
         } else {
-            me["Simple_R5"].setFont(symbol);
             me["Simple_R5"].setFontSize(small);
             me["Simple_R5"].setText("[     . ]/[    ]");
         }

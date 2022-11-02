@@ -360,6 +360,18 @@ var aocDisabled = func(i) {
     setprop("/MCDU[" ~ i ~ "]/scratchpad", "AOC DISABLED");
 }
 
+var statusMsg = func(i, msg) {
+    if (getprop("/MCDU[" ~ i ~ "]/scratchpad") != msg) {
+        if (getprop("/MCDU[" ~ i ~ "]/scratchpad-msg") == 1) {
+            setprop("/MCDU[" ~ i ~ "]/last-scratchpad", "");
+        } else {
+            setprop("/MCDU[" ~ i ~ "]/last-scratchpad", getprop("/MCDU[" ~ i ~ "]/scratchpad"));
+        }
+    }
+    setprop("/MCDU[" ~ i ~ "]/scratchpad-msg", 1);
+    setprop("/MCDU[" ~ i ~ "]/scratchpad", msg);
+}
+
 var screenFlash = func(time, i) {
     var page = getprop("/MCDU[" ~ i ~ "]/page");
     setprop("/MCDU[" ~ i ~ "]/page", "NONE");

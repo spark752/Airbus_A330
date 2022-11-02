@@ -3,8 +3,6 @@
 # Functions will be called within the namespace of canvas_MCDU_base
 var toPage = func(page_switch) {
     # Legacy variable names
-    var default = me.default_font;
-    var symbol = me.symbol_font;
     var normal = me.normal_font_size;
     var small = me.small_font_size;
 
@@ -16,59 +14,14 @@ var toPage = func(page_switch) {
         me["ArrowLeft"].hide();
         me["ArrowRight"].hide();
 
-        me["Simple_L1"].show();
-        me["Simple_L2"].show();
-        me["Simple_L3"].show();
-        me["Simple_L4"].show();
-        me["Simple_L5"].show();
-        me["Simple_L6"].show();
-        me["Simple_L1S"].show();
-        me["Simple_L2S"].show();
-        me["Simple_L3S"].show();
-        me["Simple_L4S"].show();
-        me["Simple_L5S"].show();
-        me["Simple_L6S"].show();
-        me["Simple_L1_Arrow"].hide();
-        me["Simple_L2_Arrow"].hide();
-        me["Simple_L3_Arrow"].hide();
-        me["Simple_L4_Arrow"].hide();
-        me["Simple_L5_Arrow"].hide();
-        me["Simple_L6_Arrow"].show();
-        me["Simple_R1"].show();
-        me["Simple_R2"].show();
-        me["Simple_R3"].show();
-        me["Simple_R4"].show();
-        me["Simple_R5"].show();
-        me["Simple_R6"].show();
-        me["Simple_R1S"].show();
-        me["Simple_R2S"].show();
-        me["Simple_R3S"].show();
-        me["Simple_R4S"].show();
-        me["Simple_R5S"].show();
-        me["Simple_R6S"].show();
-        me["Simple_R1_Arrow"].hide();
-        me["Simple_R2_Arrow"].hide();
-        me["Simple_R3_Arrow"].hide();
-        me["Simple_R4_Arrow"].hide();
-        me["Simple_R5_Arrow"].hide();
-        me["Simple_R6_Arrow"].show();
-        me["Simple_C1"].hide();
-        me["Simple_C2"].hide();
-        me["Simple_C3"].hide();
-        me["Simple_C4"].hide();
-        me["Simple_C5"].hide();
-        me["Simple_C6"].hide();
-        me["Simple_C1S"].show();
-        me["Simple_C2S"].show();
-        me["Simple_C3S"].show();
-        me["Simple_C4S"].hide();
-        me["Simple_C5S"].hide();
-        me["Simple_C6S"].hide();
-
-        me.fontLeft(default, default, default, default, default, default);
-        me.fontLeftS(default, default, default, default, default, default);
-        me.fontRight(default, symbol, 0, 0, default, default);
-        me.fontRightS(default, default, default, default, default, default);
+        showLeft(me, 1, 1, 1, 1, 1, 1);
+        showLeftS(me, 1, 1, 1, 1, 1, 1);
+        showRight(me, 1, 1, 1, 1, 1, 1);
+        showRightS(me, 1, 1, 1, 1, 1, 1);
+        showLeftArrow(me, -1, -1, -1, -1, -1, 1);
+        showRightArrow(me, -1, -1, -1, -1, -1, 1);
+        showCenter(me, -1, -1, -1, -1, -1, -1);
+        showCenterS(me, 1, 1, 1, -1, -1, -1);
 
         me.fontSizeLeft(normal, normal, normal, normal, 0, normal);
         me.fontSizeRight(normal, small, 0, 0, 0, normal);
@@ -130,23 +83,19 @@ var toPage = func(page_switch) {
         me["Simple_L5"].setFontSize(small);
     }
     if (node.flapTHSSet.getValue() == 1) {
-        me["Simple_R3"].setFont(default);
         me["Simple_R3"].setFontSize(normal);
         me["Simple_R3"].setText(
             node.flapTO.getValue() ~ "/UP" ~
             node.THSTO.getValue());
     } else {
-        me["Simple_R3"].setFont(symbol);
         me["Simple_R3"].setFontSize(small);
         me["Simple_R3"].setText("[  ]/[      ]");
     }
     if (node.flexSet.getValue() == 1) {
-        me["Simple_R4"].setFont(default);
         me["Simple_R4"].setFontSize(normal);
         me["Simple_R4"].setText(sprintf("%3.0f",
             node.flex.getValue()));
     } else {
-        me["Simple_R4"].setFont(symbol);
         me["Simple_R4"].setFontSize(small);
         me["Simple_R4"].setText("[   ]");
     }
@@ -169,8 +118,6 @@ var toPage = func(page_switch) {
 
 var phasePage = func(page_switch) {
     # Legacy variable names
-    var default = me.default_font;
-    var symbol = me.symbol_font;
     var normal = me.normal_font_size;
     var small = me.small_font_size;
 
@@ -186,56 +133,14 @@ var phasePage = func(page_switch) {
         me["ArrowLeft"].hide();
         me["ArrowRight"].hide();
 
-        me["Simple_L1"].show();
-        me["Simple_L2"].show();
-        me["Simple_L3"].show();
-        me["Simple_L4"].hide();
-        me["Simple_L5"].hide();
-        me["Simple_L6"].show();
-        me["Simple_L1S"].show();
-        me["Simple_L2S"].show();
-        me["Simple_L3S"].show();
-        me["Simple_L4S"].hide();
-        me["Simple_L5S"].hide();
-        me["Simple_L6S"].show();
-        me["Simple_L1_Arrow"].hide();
-        me["Simple_L2_Arrow"].hide();
-        me["Simple_L3_Arrow"].hide();
-        me["Simple_L4_Arrow"].hide();
-        me["Simple_L5_Arrow"].hide();
-        me["Simple_L6_Arrow"].show();
-        me["Simple_R1"].show();
-        me["Simple_R2"].hide();
-        me["Simple_R3"].hide();
-        me["Simple_R4"].hide();
-        me["Simple_R6"].show();
-        me["Simple_R1S"].show();
-        me["Simple_R2S"].hide();
-        me["Simple_R3S"].hide();
-        me["Simple_R4S"].hide();
-        me["Simple_R6S"].show();
-        me["Simple_R1_Arrow"].hide();
-        me["Simple_R2_Arrow"].hide();
-        me["Simple_R3_Arrow"].hide();
-        me["Simple_R4_Arrow"].hide();
-        me["Simple_R5_Arrow"].hide();
-        me["Simple_R6_Arrow"].show();
-        me["Simple_C1"].show();
-        me["Simple_C2"].hide();
-        me["Simple_C3"].hide();
-        me["Simple_C4"].hide();
-        me["Simple_C6"].hide();
-        me["Simple_C1S"].show();
-        me["Simple_C2S"].hide();
-        me["Simple_C3S"].hide();
-        me["Simple_C4S"].hide();
-        me["Simple_C5S"].hide();
-        me["Simple_C6S"].hide();
-
-        me.fontLeft(default, default, default, symbol, default, default);
-        me.fontLeftS(default, default, default, default, default, default);
-        me.fontRight(default, default, default, default, default, default);
-        me.fontRightS(default, default, default, default, default, default);
+        showLeft(me, 1, 1, 1, -1, -1, 1);
+        showLeftS(me, 1, 1, 1, -1, -1, 1);
+        showRight(me, 1, -1, -1, -1, -1, 1);
+        showRightS(me, 1, -1, -1, -1, -1, 1);
+        showLeftArrow(me, -1, -1, -1, -1, -1, 1);
+        showRightArrow(me, -1, -1, -1, -1, -1, 1);
+        showCenter(me, 1, -1, -1, -1, -1, -1);
+        showCenterS(me, 1, -1, -1, -1, -1, -1);
 
         me.fontSizeLeft(normal, normal, small, small, normal, normal);
         me.fontSizeRight(normal, normal, normal, normal, small, normal);
@@ -276,11 +181,11 @@ var phasePage = func(page_switch) {
     }
 
     if (node.costIndexSet.getValue() == 1) {
-        me["Simple_L2"].setColor(0.0901,0.6039,0.7176);
+        me["Simple_L2"].setColor(BLUE);
         me["Simple_L2"].setText(sprintf("%3.0f",
             node.costIndex.getValue()));
     } else {
-        me["Simple_L2"].setColor(1,1,1);
+        me["Simple_L2"].setColor(WHITE);
         me["Simple_L2"].setText("---");
     }
 
@@ -297,8 +202,6 @@ var phasePage = func(page_switch) {
 
 var perfAPPRPage = func(page_switch) {
     # Legacy variable names
-    var default = me.default_font;
-    var symbol = me.symbol_font;
     var normal = me.normal_font_size;
     var small = me.small_font_size;
 
@@ -309,18 +212,17 @@ var perfAPPRPage = func(page_switch) {
         me.defaultPageNumbers();
 
         showLeft(me, 1, 1, 1, 1, 1, 1);
-        me["Simple_L0S"].show();
         showLeftS(me, 1, 1, 1, 1, 1, 1);
-
-        showLeftArrow(me, -1, -1, -1, -1, -1, 1);
         showRight(me, 1, 1, 1, 1, 1, 1);
         showRightS(me, 1, 1, 1, 1, -1, 1);
+        showLeftArrow(me, -1, -1, -1, -1, -1, 1);
         showRightArrow(me, -1, -1, -1, -1, -1, 1);
         showCenter(me, 1, 1, 1, -1, 1, -1);
+        showCenterS(me, 1, 1, 1, -1, 1, -1);
+        me["Simple_L0S"].show();        
         me["Simple_C3B"].hide();
         me["Simple_C4B"].hide();
-        showCenterS(me, 1, 1, 1, -1, 1, -1);
-
+        
         me.fontSizeLeft(small, small, small, small, small, normal);
         me.fontSizeRight(normal, small, small, small, normal, normal);
         me.fontSizeCenter(small, small, small, 0, small, 0);

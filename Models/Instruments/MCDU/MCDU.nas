@@ -9,21 +9,6 @@ var BLUE = [0.0901,0.6039,0.7176];
 var AMBER = [0.7333,0.3803,0.0000];
 var YELLOW = [0.9333,0.9333,0.0000];
 var MAGENTA = [0.6902,0.3333,0.7541];
-setprop("/MCDUC/colors/wht/r", WHITE[0]);
-setprop("/MCDUC/colors/wht/g", WHITE[1]);
-setprop("/MCDUC/colors/wht/b", WHITE[2]);
-setprop("/MCDUC/colors/grn/r", GREEN[0]);
-setprop("/MCDUC/colors/grn/g", GREEN[1]);
-setprop("/MCDUC/colors/grn/b", GREEN[2]);
-setprop("/MCDUC/colors/blu/r", BLUE[0]);
-setprop("/MCDUC/colors/blu/g", BLUE[1]);
-setprop("/MCDUC/colors/blu/b", BLUE[2]);
-setprop("/MCDUC/colors/amb/r", AMBER[0]);
-setprop("/MCDUC/colors/amb/g", AMBER[1]);
-setprop("/MCDUC/colors/amb/b", AMBER[2]);
-setprop("/MCDUC/colors/yel/r", YELLOW[0]);
-setprop("/MCDUC/colors/yel/g", YELLOW[1]);
-setprop("/MCDUC/colors/yel/b", YELLOW[2]);
 
 # Property nodes
 var node = {
@@ -99,34 +84,17 @@ var node = {
     final: props.globals.getNode("/FMGC/internal/final", 1),
     radio: props.globals.getNode("/FMGC/internal/radio", 1),
     baro: props.globals.getNode("/FMGC/internal/baro", 1),
-};
-
-# Page mapping
-var page_map = {
-    "MCDU": menuPage,
-    "STATUS": statusPage,
-    "DATA": dataPage,
-    "DATA2": data2Page,
-    "POSMON": posmonPage,
-    "RADNAV": radnavPage,
-    "INITA": initAPage,
-    "INITB": initBPage,
-    "FUELPRED": fuelpredPage,
-    "PERFTO": toPage,
-    "PERFCLB": phasePage,
-    "PERFCRZ": phasePage,
-    "PERFDES": phasePage,
-    "PERFAPPR": perfAPPRPage,
-    "PERFGA": phasePage,
+    weight_kgs_used: props.globals.getNode(
+        "/systems/acconfig/options/weight-kgs", 1),
 };
 
 # Base class for MCDU canvas
 var canvas_MCDU_base = {
     # Shared variables
-    default_font: "BoeingCDU-Large.ttf",
-    symbol_font: "helvetica_medium.txf",
-    normal_font_size: 70,
-    small_font_size: 56,
+    default_font: "HoneywellMCDU.ttf",
+    small_font: "HoneywellMCDUSmall.ttf",
+    normal_font_size: 60,
+    small_font_size: 46,
 
     # Methods
     new: func(canvas_group, mcdu_index) {
@@ -163,25 +131,38 @@ var canvas_MCDU_base = {
                 if (clip_el != nil) {
                     clip_el.setVisible(0);
                     var tran_rect = clip_el.getTransformedBounds();
-
                     var clip_rect = sprintf("rect(%d,%d, %d,%d)",
-                    tran_rect[1], # 0 ys
-                    tran_rect[2], # 1 xe
-                    tran_rect[3], # 2 ye
-                    tran_rect[0]); #3 xs
-                    #   coordinates are top,right,bottom,left (ys, xe, ye, xs) ref: l621 of simgear/canvas/CanvasElement.cxx
+                        tran_rect[1], # 0 ys
+                        tran_rect[2], # 1 xe
+                        tran_rect[3], # 2 ye
+                        tran_rect[0]); #3 xs
+                    # coordinates are top,right,bottom,left (ys, xe, ye, xs)
+                    # ref: l621 of simgear/canvas/CanvasElement.cxx
                     me[key].set("clip", clip_rect);
                     me[key].set("clip-frame", canvas.Element.PARENT);
                 }
             }
         }
 
-        me["PERFTO_FE"].setFont(me.symbol_font);
-        me["PERFTO_SE"].setFont(me.symbol_font);
-        me["PERFTO_OE"].setFont(me.symbol_font);
-        me["PERFTO_FE"].setColor(0.8078,0.8039,0.8078);
-        me["PERFTO_SE"].setColor(0.8078,0.8039,0.8078);
-        me["PERFTO_OE"].setColor(0.8078,0.8039,0.8078);
+        me["Simple_L1S"].setFont(me.small_font);
+        me["Simple_L2S"].setFont(me.small_font);
+        me["Simple_L3S"].setFont(me.small_font);
+        me["Simple_L4S"].setFont(me.small_font);
+        me["Simple_L5S"].setFont(me.small_font);
+        me["Simple_L6S"].setFont(me.small_font);
+        me["Simple_C1S"].setFont(me.small_font);
+        me["Simple_C2S"].setFont(me.small_font);
+        me["Simple_C3S"].setFont(me.small_font);
+        me["Simple_C4S"].setFont(me.small_font);
+        me["Simple_C5S"].setFont(me.small_font);
+        me["Simple_C6S"].setFont(me.small_font);
+        me["Simple_R1S"].setFont(me.small_font);
+        me["Simple_R2S"].setFont(me.small_font);
+        me["Simple_R3S"].setFont(me.small_font);
+        me["Simple_R4S"].setFont(me.small_font);
+        me["Simple_R5S"].setFont(me.small_font);
+        me["Simple_R6S"].setFont(me.small_font);
+
         me["COCALLTUNE"].hide();
         me["COCALL"].hide();
         me["PRINTPAGE"].hide();
@@ -220,7 +201,7 @@ var canvas_MCDU_base = {
             "Simple_C2S","Simple_C3S","Simple_C4S","Simple_C5S","Simple_C6S",
             "INITA","INITA_CoRoute","INITA_FltNbr","INITA_CostIndex",
             "INITA_CruiseFLTemp","INITA_FromTo","INITA_InitRequest",
-            "INITA_AlignIRS","INITB","INITB_ZFWCG","INITB_ZFW","INITB_ZFWCG_S",
+            "INITA_AlignIRS","INITB","INITB_ZFWCG","INITB_ZFW",
             "INITB_Block","FUELPRED","FUELPRED_ZFW","FUELPRED_ZFWCG",
             "FUELPRED_ZFWCG_S","PROG","PROG_UPDATE","PERFTO",
             "PERFTO_V1","PERFTO_VR","PERFTO_V2","PERFTO_FE","PERFTO_SE",
@@ -243,12 +224,26 @@ var canvas_MCDU_base = {
         return 1;
     },
     update: func() {
-        # Legacy variable names
-        var default = me.default_font;
-        var symbol = me.symbol_font;
-        var normal = me.normal_font_size;
-        var small = me.small_font_size;
+        # Page mapping
+        var page_map = {
+            "MCDU": menuPage,
+            "STATUS": statusPage,
+            "DATA": dataPage,
+            "DATA2": data2Page,
+            "POSMON": posmonPage,
+            "RADNAV": radnavPage,
+            "INITA": initAPage,
+            "INITB": initBPage,
+            "FUELPRED": fuelpredPage,
+            "PERFTO": toPage,
+            "PERFCLB": phasePage,
+            "PERFCRZ": phasePage,
+            "PERFDES": phasePage,
+            "PERFAPPR": perfAPPRPage,
+            "PERFGA": phasePage,
+        };
 
+        # Check if page switched since last time
         var page = me.page_prop.getValue();
         var page_switch = 0;
         if (page != me.previous_page) {
@@ -263,15 +258,14 @@ var canvas_MCDU_base = {
             call(f, [page_switch], me);
         } else {
             if (page_switch) {
+                me.defaultHide();
                 me["Simple"].hide();
-                me["INITA"].hide();
-                me["INITB"].hide();
-                me["PERFTO"].hide();
                 me["ArrowLeft"].hide();
                 me["ArrowRight"].hide();
             }
         }
 
+        # Update scratchpad field from scratchpad
         me["Scratchpad"].setText(me.scratchpad_prop.getValue());
     },
     defaultHide: func() {
@@ -307,342 +301,172 @@ var canvas_MCDU_base = {
         me["ArrowLeft"].hide();
         me["ArrowRight"].hide();
     },
-    # ack = ignore, wht = white, grn = green, blu = blue, amb = amber, yel = yellow
+    color_map: {
+        "wht": WHITE,
+        "grn": GREEN,
+        "blu": BLUE,
+        "amb": AMBER,
+        "yel": YELLOW,
+        "mag": MAGENTA,
+    }, # "ack" (or any other value not in map) = ignore
     colorLeft: func(a, b, c, d, e, f) {
-        if (a != "ack") {
-            me["Simple_L1"].setColor(getprop("/MCDUC/colors/" ~ a ~ "/r"),
-                getprop("/MCDUC/colors/" ~ a ~ "/g"),
-                getprop("/MCDUC/colors/" ~ a ~ "/b"));
+        if (me.color_map[a] != nil) {
+            me["Simple_L1"].setColor(me.color_map[a]);
         }
-        if (b != "ack") {
-            me["Simple_L2"].setColor(getprop("/MCDUC/colors/" ~ b ~ "/r"),
-                getprop("/MCDUC/colors/" ~ b ~ "/g"),
-                getprop("/MCDUC/colors/" ~ b ~ "/b"));
+        if (me.color_map[b] != nil) {
+            me["Simple_L2"].setColor(me.color_map[b]);
         }
-        if (c != "ack") {
-            me["Simple_L3"].setColor(getprop("/MCDUC/colors/" ~ c ~ "/r"),
-                getprop("/MCDUC/colors/" ~ c ~ "/g"),
-                getprop("/MCDUC/colors/" ~ c ~ "/b"));
+        if (me.color_map[c] != nil) {
+            me["Simple_L3"].setColor(me.color_map[c]);
         }
-        if (d != "ack") {
-            me["Simple_L4"].setColor(getprop("/MCDUC/colors/" ~ d ~ "/r"),
-                getprop("/MCDUC/colors/" ~ d ~ "/g"),
-                getprop("/MCDUC/colors/" ~ d ~ "/b"));
+        if (me.color_map[d] != nil) {
+            me["Simple_L4"].setColor(me.color_map[d]);
         }
-        if (e != "ack") {
-            me["Simple_L5"].setColor(getprop("/MCDUC/colors/" ~ e ~ "/r"),
-                getprop("/MCDUC/colors/" ~ e ~ "/g"),
-                getprop("/MCDUC/colors/" ~ e ~ "/b"));
+        if (me.color_map[e] != nil) {
+            me["Simple_L5"].setColor(me.color_map[e]);
         }
-        if (f != "ack") {
-            me["Simple_L6"].setColor(getprop("/MCDUC/colors/" ~ f ~ "/r"),
-                getprop("/MCDUC/colors/" ~ f ~ "/g"),
-                getprop("/MCDUC/colors/" ~ f ~ "/b"));
+        if (me.color_map[f] != nil) {
+            me["Simple_L6"].setColor(me.color_map[f]);
         }
     },
     colorLeftS: func(a, b, c, d, e, f) {
-        if (a != "ack") {
-            me["Simple_L1S"].setColor(getprop("/MCDUC/colors/" ~ a ~ "/r"),
-                getprop("/MCDUC/colors/" ~ a ~ "/g"),
-                getprop("/MCDUC/colors/" ~ a ~ "/b"));
+        if (me.color_map[a] != nil) {
+            me["Simple_L1S"].setColor(me.color_map[a]);
         }
-        if (b != "ack") {
-            me["Simple_L2S"].setColor(getprop("/MCDUC/colors/" ~ b ~ "/r"),
-                getprop("/MCDUC/colors/" ~ b ~ "/g"),
-                getprop("/MCDUC/colors/" ~ b ~ "/b"));
+        if (me.color_map[b] != nil) {
+            me["Simple_L2S"].setColor(me.color_map[b]);
         }
-        if (c != "ack") {
-            me["Simple_L3S"].setColor(getprop("/MCDUC/colors/" ~ c ~ "/r"),
-                getprop("/MCDUC/colors/" ~ c ~ "/g"),
-                getprop("/MCDUC/colors/" ~ c ~ "/b"));
+        if (me.color_map[c] != nil) {
+            me["Simple_L3S"].setColor(me.color_map[c]);
         }
-        if (d != "ack") {
-            me["Simple_L4S"].setColor(getprop("/MCDUC/colors/" ~ d ~ "/r"),
-                getprop("/MCDUC/colors/" ~ d ~ "/g"),
-                getprop("/MCDUC/colors/" ~ d ~ "/b"));
+        if (me.color_map[d] != nil) {
+            me["Simple_L4S"].setColor(me.color_map[d]);
         }
-        if (e != "ack") {
-            me["Simple_L5S"].setColor(getprop("/MCDUC/colors/" ~ e ~ "/r"),
-                getprop("/MCDUC/colors/" ~ e ~ "/g"),
-                getprop("/MCDUC/colors/" ~ e ~ "/b"));
+        if (me.color_map[e] != nil) {
+            me["Simple_L5S"].setColor(me.color_map[e]);
         }
-        if (f != "ack") {
-            me["Simple_L6S"].setColor(getprop("/MCDUC/colors/" ~ f ~ "/r"),
-                getprop("/MCDUC/colors/" ~ f ~ "/g"),
-                getprop("/MCDUC/colors/" ~ f ~ "/b"));
+        if (me.color_map[f] != nil) {
+            me["Simple_L6S"].setColor(me.color_map[f]);
         }
     },
     colorLeftArrow: func(a, b, c, d, e, f) {
-        if (a != "ack") {
-            me["Simple_L1_Arrow"].setColor(getprop("/MCDUC/colors/" ~ a ~ "/r"),
-                getprop("/MCDUC/colors/" ~ a ~ "/g"),
-                getprop("/MCDUC/colors/" ~ a ~ "/b"));
+        if (me.color_map[a] != nil) {
+            me["Simple_L1_Arrow"].setColor(me.color_map[a]);
         }
-        if (b != "ack") {
-            me["Simple_L2_Arrow"].setColor(getprop("/MCDUC/colors/" ~ b ~ "/r"),
-                getprop("/MCDUC/colors/" ~ b ~ "/g"),
-                getprop("/MCDUC/colors/" ~ b ~ "/b"));
+        if (me.color_map[b] != nil) {
+            me["Simple_L2_Arrow"].setColor(me.color_map[b]);
         }
-        if (c != "ack") {
-            me["Simple_L3_Arrow"].setColor(getprop("/MCDUC/colors/" ~ c ~ "/r"),
-                getprop("/MCDUC/colors/" ~ c ~ "/g"),
-                getprop("/MCDUC/colors/" ~ c ~ "/b"));
+        if (me.color_map[c] != nil) {
+            me["Simple_L3_Arrow"].setColor(me.color_map[c]);
         }
-        if (d != "ack") {
-            me["Simple_L4_Arrow"].setColor(getprop("/MCDUC/colors/" ~ d ~ "/r"),
-                getprop("/MCDUC/colors/" ~ d ~ "/g"),
-                getprop("/MCDUC/colors/" ~ d ~ "/b"));
+        if (me.color_map[d] != nil) {
+            me["Simple_L4_Arrow"].setColor(me.color_map[d]);
         }
-        if (e != "ack") {
-            me["Simple_L5_Arrow"].setColor(getprop("/MCDUC/colors/" ~ e ~ "/r"),
-                getprop("/MCDUC/colors/" ~ e ~ "/g"),
-                getprop("/MCDUC/colors/" ~ e ~ "/b"));
+        if (me.color_map[e] != nil) {
+            me["Simple_L5_Arrow"].setColor(me.color_map[e]);
         }
-        if (f != "ack") {
-            me["Simple_L6_Arrow"].setColor(getprop("/MCDUC/colors/" ~ f ~ "/r"),
-                getprop("/MCDUC/colors/" ~ f ~ "/g"),
-                getprop("/MCDUC/colors/" ~ f ~ "/b"));
+        if (me.color_map[f] != nil) {
+            me["Simple_L6_Arrow"].setColor(me.color_map[f]);
         }
     },
     colorRight: func(a, b, c, d, e, f) {
-        if (a != "ack") {
-            me["Simple_R1"].setColor(getprop("/MCDUC/colors/" ~ a ~ "/r"),
-                getprop("/MCDUC/colors/" ~ a ~ "/g"),
-                getprop("/MCDUC/colors/" ~ a ~ "/b"));
+        if (me.color_map[a] != nil) {
+            me["Simple_R1"].setColor(me.color_map[a]);
         }
-        if (b != "ack") {
-            me["Simple_R2"].setColor(getprop("/MCDUC/colors/" ~ b ~ "/r"),
-                getprop("/MCDUC/colors/" ~ b ~ "/g"),
-                getprop("/MCDUC/colors/" ~ b ~ "/b"));
+        if (me.color_map[b] != nil) {
+            me["Simple_R2"].setColor(me.color_map[b]);
         }
-        if (c != "ack") {
-            me["Simple_R3"].setColor(getprop("/MCDUC/colors/" ~ c ~ "/r"),
-                getprop("/MCDUC/colors/" ~ c ~ "/g"),
-                getprop("/MCDUC/colors/" ~ c ~ "/b"));
+        if (me.color_map[c] != nil) {
+            me["Simple_R3"].setColor(me.color_map[c]);
         }
-        if (d != "ack") {
-            me["Simple_R4"].setColor(getprop("/MCDUC/colors/" ~ d ~ "/r"),
-                getprop("/MCDUC/colors/" ~ d ~ "/g"),
-                getprop("/MCDUC/colors/" ~ d ~ "/b"));
+        if (me.color_map[d] != nil) {
+            me["Simple_R4"].setColor(me.color_map[d]);
         }
-        if (e != "ack") {
-            me["Simple_R5"].setColor(getprop("/MCDUC/colors/" ~ e ~ "/r"),
-                getprop("/MCDUC/colors/" ~ e ~ "/g"),
-                getprop("/MCDUC/colors/" ~ e ~ "/b"));
+        if (me.color_map[e] != nil) {
+            me["Simple_R5"].setColor(me.color_map[e]);
         }
-        if (f != "ack") {
-            me["Simple_R6"].setColor(getprop("/MCDUC/colors/" ~ f ~ "/r"),
-                getprop("/MCDUC/colors/" ~ f ~ "/g"),
-                getprop("/MCDUC/colors/" ~ f ~ "/b"));
+        if (me.color_map[f] != nil) {
+            me["Simple_R6"].setColor(me.color_map[f]);
         }
     },
     colorRightS: func(a, b, c, d, e, f) {
-        if (a != "ack") {
-            me["Simple_R1S"].setColor(getprop("/MCDUC/colors/" ~ a ~ "/r"),
-                getprop("/MCDUC/colors/" ~ a ~ "/g"),
-                getprop("/MCDUC/colors/" ~ a ~ "/b"));
+        if (me.color_map[a] != nil) {
+            me["Simple_R1S"].setColor(me.color_map[a]);
         }
-        if (b != "ack") {
-            me["Simple_R2S"].setColor(getprop("/MCDUC/colors/" ~ b ~ "/r"),
-                getprop("/MCDUC/colors/" ~ b ~ "/g"),
-                getprop("/MCDUC/colors/" ~ b ~ "/b"));
+        if (me.color_map[b] != nil) {
+            me["Simple_R2S"].setColor(me.color_map[b]);
         }
-        if (c != "ack") {
-            me["Simple_R3S"].setColor(getprop("/MCDUC/colors/" ~ c ~ "/r"),
-                getprop("/MCDUC/colors/" ~ c ~ "/g"),
-                getprop("/MCDUC/colors/" ~ c ~ "/b"));
+        if (me.color_map[c] != nil) {
+            me["Simple_R3S"].setColor(me.color_map[c]);
         }
-        if (d != "ack") {
-            me["Simple_R4S"].setColor(getprop("/MCDUC/colors/" ~ d ~ "/r"),
-                getprop("/MCDUC/colors/" ~ d ~ "/g"),
-                getprop("/MCDUC/colors/" ~ d ~ "/b"));
+        if (me.color_map[d] != nil) {
+            me["Simple_R4S"].setColor(me.color_map[d]);
         }
-        if (e != "ack") {
-            me["Simple_R5S"].setColor(getprop("/MCDUC/colors/" ~ e ~ "/r"),
-                getprop("/MCDUC/colors/" ~ e ~ "/g"),
-                getprop("/MCDUC/colors/" ~ e ~ "/b"));
+        if (me.color_map[e] != nil) {
+            me["Simple_R5S"].setColor(me.color_map[e]);
         }
-        if (f != "ack") {
-            me["Simple_R6S"].setColor(getprop("/MCDUC/colors/" ~ f ~ "/r"),
-                getprop("/MCDUC/colors/" ~ f ~ "/g"),
-                getprop("/MCDUC/colors/" ~ f ~ "/b"));
+        if (me.color_map[f] != nil) {
+            me["Simple_R6S"].setColor(me.color_map[f]);
         }
     },
     colorRightArrow: func(a, b, c, d, e, f) {
-        if (a != "ack") {
-            me["Simple_R1_Arrow"].setColor(getprop("/MCDUC/colors/" ~ a ~ "/r"),
-                getprop("/MCDUC/colors/" ~ a ~ "/g"),
-                getprop("/MCDUC/colors/" ~ a ~ "/b"));
+        if (me.color_map[a] != nil) {
+            me["Simple_R1_Arrow"].setColor(me.color_map[a]);
         }
-        if (b != "ack") {
-            me["Simple_R2_Arrow"].setColor(getprop("/MCDUC/colors/" ~ b ~ "/r"),
-                getprop("/MCDUC/colors/" ~ b ~ "/g"),
-                getprop("/MCDUC/colors/" ~ b ~ "/b"));
+        if (me.color_map[b] != nil) {
+            me["Simple_R2_Arrow"].setColor(me.color_map[b]);
         }
-        if (c != "ack") {
-            me["Simple_R3_Arrow"].setColor(getprop("/MCDUC/colors/" ~ c ~ "/r"),
-                getprop("/MCDUC/colors/" ~ c ~ "/g"),
-                getprop("/MCDUC/colors/" ~ c ~ "/b"));
+        if (me.color_map[c] != nil) {
+            me["Simple_R3_Arrow"].setColor(me.color_map[c]);
         }
-        if (d != "ack") {
-            me["Simple_R4_Arrow"].setColor(getprop("/MCDUC/colors/" ~ d ~ "/r"),
-                getprop("/MCDUC/colors/" ~ d ~ "/g"),
-                getprop("/MCDUC/colors/" ~ d ~ "/b"));
+        if (me.color_map[d] != nil) {
+            me["Simple_R4_Arrow"].setColor(me.color_map[d]);
         }
-        if (e != "ack") {
-            me["Simple_R5_Arrow"].setColor(getprop("/MCDUC/colors/" ~ e ~ "/r"),
-                getprop("/MCDUC/colors/" ~ e ~ "/g"),
-                getprop("/MCDUC/colors/" ~ e ~ "/b"));
+        if (me.color_map[e] != nil) {
+            me["Simple_R5_Arrow"].setColor(me.color_map[e]);
         }
-        if (f != "ack") {
-            me["Simple_R6_Arrow"].setColor(getprop("/MCDUC/colors/" ~ f ~ "/r"),
-                getprop("/MCDUC/colors/" ~ f ~ "/g"),
-                getprop("/MCDUC/colors/" ~ f ~ "/b"));
+        if (me.color_map[f] != nil) {
+            me["Simple_R6_Arrow"].setColor(me.color_map[f]);
         }
     },
     colorCenter: func(a, b, c, d, e, f) {
-        if (a != "ack") {
-            me["Simple_C1"].setColor(getprop("/MCDUC/colors/" ~ a ~ "/r"),
-                getprop("/MCDUC/colors/" ~ a ~ "/g"),
-                getprop("/MCDUC/colors/" ~ a ~ "/b"));
+        if (me.color_map[a] != nil) {
+            me["Simple_C1"].setColor(me.color_map[a]);
         }
-        if (b != "ack") {
-            me["Simple_C2"].setColor(getprop("/MCDUC/colors/" ~ b ~ "/r"),
-                getprop("/MCDUC/colors/" ~ b ~ "/g"),
-                getprop("/MCDUC/colors/" ~ b ~ "/b"));
+        if (me.color_map[b] != nil) {
+            me["Simple_C2"].setColor(me.color_map[b]);
         }
-        if (c != "ack") {
-            me["Simple_C3"].setColor(getprop("/MCDUC/colors/" ~ c ~ "/r"),
-                getprop("/MCDUC/colors/" ~ c ~ "/g"),
-                getprop("/MCDUC/colors/" ~ c ~ "/b"));
+        if (me.color_map[c] != nil) {
+            me["Simple_C3"].setColor(me.color_map[c]);
         }
-        if (d != "ack") {
-            me["Simple_C4"].setColor(getprop("/MCDUC/colors/" ~ d ~ "/r"),
-                getprop("/MCDUC/colors/" ~ d ~ "/g"),
-                getprop("/MCDUC/colors/" ~ d ~ "/b"));
+        if (me.color_map[d] != nil) {
+            me["Simple_C4"].setColor(me.color_map[d]);
         }
-        if (e != "ack") {
-            me["Simple_C5"].setColor(getprop("/MCDUC/colors/" ~ e ~ "/r"),
-                getprop("/MCDUC/colors/" ~ e ~ "/g"),
-                getprop("/MCDUC/colors/" ~ e ~ "/b"));
+        if (me.color_map[e] != nil) {
+            me["Simple_C5"].setColor(me.color_map[e]);
         }
-        if (f != "ack") {
-            me["Simple_C6"].setColor(getprop("/MCDUC/colors/" ~ f ~ "/r"),
-                getprop("/MCDUC/colors/" ~ f ~ "/g"),
-                getprop("/MCDUC/colors/" ~ f ~ "/b"));
+        if (me.color_map[f] != nil) {
+            me["Simple_C6"].setColor(me.color_map[f]);
         }
     },
     colorCenterS: func(a, b, c, d, e, f) {
-        if (a != "ack") {
-            me["Simple_C1S"].setColor(getprop("/MCDUC/colors/" ~ a ~ "/r"),
-                getprop("/MCDUC/colors/" ~ a ~ "/g"),
-                getprop("/MCDUC/colors/" ~ a ~ "/b"));
+        if (me.color_map[a] != nil) {
+            me["Simple_C1S"].setColor(me.color_map[a]);
         }
-        if (b != "ack") {
-            me["Simple_C2S"].setColor(getprop("/MCDUC/colors/" ~ b ~ "/r"),
-                getprop("/MCDUC/colors/" ~ b ~ "/g"),
-                getprop("/MCDUC/colors/" ~ b ~ "/b"));
+        if (me.color_map[b] != nil) {
+            me["Simple_C2S"].setColor(me.color_map[b]);
         }
-        if (c != "ack") {
-            me["Simple_C3S"].setColor(getprop("/MCDUC/colors/" ~ c ~ "/r"),
-                getprop("/MCDUC/colors/" ~ c ~ "/g"),
-                getprop("/MCDUC/colors/" ~ c ~ "/b"));
+        if (me.color_map[c] != nil) {
+            me["Simple_C3S"].setColor(me.color_map[c]);
         }
-        if (d != "ack") {
-            me["Simple_C4S"].setColor(getprop("/MCDUC/colors/" ~ d ~ "/r"),
-                getprop("/MCDUC/colors/" ~ d ~ "/g"),
-                getprop("/MCDUC/colors/" ~ d ~ "/b"));
+        if (me.color_map[d] != nil) {
+            me["Simple_C4S"].setColor(me.color_map[d]);
         }
-        if (e != "ack") {
-            me["Simple_C5S"].setColor(getprop("/MCDUC/colors/" ~ e ~ "/r"),
-                getprop("/MCDUC/colors/" ~ e ~ "/g"),
-                getprop("/MCDUC/colors/" ~ e ~ "/b"));
+        if (me.color_map[e] != nil) {
+            me["Simple_C5S"].setColor(me.color_map[e]);
         }
-        if (f != "ack") {
-            me["Simple_C6S"].setColor(getprop("/MCDUC/colors/" ~ f ~ "/r"),
-                getprop("/MCDUC/colors/" ~ f ~ "/g"),
-                getprop("/MCDUC/colors/" ~ f ~ "/b"));
-        }
-    },
-    # 0 = ignore
-    fontLeft: func (a, b, c, d, e, f) {
-        if (a != 0) {
-            me["Simple_L1"].setFont(a);
-        }
-        if (b != 0) {
-            me["Simple_L2"].setFont(b);
-        }
-        if (c != 0) {
-            me["Simple_L3"].setFont(c);
-        }
-        if (d != 0) {
-            me["Simple_L4"].setFont(d);
-        }
-        if (e != 0) {
-            me["Simple_L5"].setFont(e);
-        }
-        if (f != 0) {
-            me["Simple_L6"].setFont(f);
-        }
-    },
-    fontLeftS: func (a, b, c, d, e, f) {
-        if (a != 0) {
-            me["Simple_L1S"].setFont(a);
-        }
-        if (b != 0) {
-            me["Simple_L2S"].setFont(b);
-        }
-        if (c != 0) {
-            me["Simple_L3S"].setFont(c);
-        }
-        if (d != 0) {
-            me["Simple_L4S"].setFont(d);
-        }
-        if (e != 0) {
-            me["Simple_L5S"].setFont(e);
-        }
-        if (f != 0) {
-            me["Simple_L6S"].setFont(f);
-        }
-    },
-    fontRight: func (a, b, c, d, e, f) {
-        if (a != 0) {
-            me["Simple_R1"].setFont(a);
-        }
-        if (b != 0) {
-            me["Simple_R2"].setFont(b);
-        }
-        if (c != 0) {
-            me["Simple_R3"].setFont(c);
-        }
-        if (d != 0) {
-            me["Simple_R4"].setFont(d);
-        }
-        if (e != 0) {
-            me["Simple_R5"].setFont(e);
-        }
-        if (f != 0) {
-            me["Simple_R6"].setFont(f);
-        }
-    },
-    fontRightS: func (a, b, c, d, e, f) {
-        if (a != 0) {
-            me["Simple_R1S"].setFont(a);
-        }
-        if (b != 0) {
-            me["Simple_R2S"].setFont(b);
-        }
-        if (c != 0) {
-            me["Simple_R3S"].setFont(c);
-        }
-        if (d != 0) {
-            me["Simple_R4S"].setFont(d);
-        }
-        if (e != 0) {
-            me["Simple_R5S"].setFont(e);
-        }
-        if (f != 0) {
-            me["Simple_R6S"].setFont(f);
+        if (me.color_map[f] != nil) {
+            me["Simple_C6S"].setColor(me.color_map[f]);
         }
     },
     fontSizeLeft: func (a, b, c, d, e, f) {
